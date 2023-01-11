@@ -595,7 +595,7 @@ breezeConnect.getTradeList(
 
 
 ```java
-breeze.getTradeDetail("NSE","20220819N100000005");
+breezeConnect.getTradeDetail("NSE","20220819N100000005");
 ```
 
 <p> Note: Please change exchange_code=“NFO” to get details about F&O</p>
