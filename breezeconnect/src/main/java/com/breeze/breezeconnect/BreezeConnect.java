@@ -500,6 +500,18 @@ public class BreezeConnect extends ApificationBreeze {
         return null;
     }
 
+    public JSONObject unsubscribeFeeds(String stockToken,String interval) throws Exception {
+        try {
+            if(Objects.isNull(stockToken) || stockToken.isEmpty() || stockToken.isBlank())
+                return this.socketConnectionResponse(config.responseMessage.get(Config.ResponseEnum.BLANK_STOCK_CODE));
+            this.unWatchOHLC(new String[] {stockToken});
+            return this.socketConnectionResponse(String.format(config.responseMessage.get(Config.ResponseEnum.STOCK_UNSUBSCRIBE_MESSAGE), stockToken));
+        }
+        catch (Exception e){
+            this.errorException(e.toString());
+        }
+        return null;
+    }
 
 
     public JSONObject unsubscribeFeeds(boolean getOrderNotification) throws Exception {
@@ -537,6 +549,23 @@ public class BreezeConnect extends ApificationBreeze {
         return null;
     }
 
+    public JSONObject unsubscribeFeeds(String exchangeCode,String stockCode,String productType,String expiryDate,
+                                       String strikePrice,String right,boolean getExchangeQuotes,boolean getMarketDepth,String interval) throws Exception {
+        try {
+            JSONObject returnObject = new JSONObject();
+            Map<String, String> tokenObject = this.getStockTokenValue(exchangeCode, stockCode, productType, expiryDate, strikePrice, right,
+                    getExchangeQuotes, getMarketDepth);
+            if(!tokenObject.getOrDefault("exchangeQuotesToken","").equals(""))
+                this.unWatchOHLC(new String[] {tokenObject.get("exchangeQuotesToken")});
+            if(!tokenObject.getOrDefault("marketDepthToken","").equals(""))
+                this.unWatchOHLC(new String[] {tokenObject.get("marketDepthToken")});
+            return this.socketConnectionResponse(String.format(config.responseMessage.get(Config.ResponseEnum.STOCK_UNSUBSCRIBE_MESSAGE), stockCode));
+        }
+        catch (Exception e){
+            this.errorException(e.toString());
+        }
+        return null;
+    }
 
     public void registerOnTickEventListener(OnTickEventListener mListener) throws Exception {
         this.mListener = mListener;
