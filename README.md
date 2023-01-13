@@ -10,7 +10,9 @@
  <li><a href="#index_title">List Of Other SDK methods</a></li>
 </ul>
 
-<b>Download the jar file of the project from the following link <a href = "https://github.com/Idirect-Tech/Breeze-Java-SDK/blob/develop/jarbuild/breezeConnect-0.0.2-SNAPSHOT.jar" download>breezeconnect jar file </a>and include it in the build path of the  project.</b>
+<h4>Usage</h4>
+
+Download the jar file of the project from the following link <a href = "https://github.com/Idirect-Tech/Breeze-Java-SDK/blob/develop/jarbuild/breezeConnect-0.0.2-SNAPSHOT.jar" download>breezeconnect jar file </a>and include it in the build path of your  project.
 
 <h4 id="client">Breeze API Java Client</h4>
 
