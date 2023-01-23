@@ -620,7 +620,7 @@ breezeConnect.getNames('NSE','RELIANCE');
 
 <hr>
 
-<h4 id = "#preview_order">Preview Order </h4>
+<h4 id = "preview_order">Preview Order </h4>
 
 ```java
 
