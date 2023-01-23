@@ -10,7 +10,9 @@
  <li><a href="#index_title">List Of Other SDK methods</a></li>
 </ul>
 
-<b>Download the jar file of the project from the following link <a href = "https://github.com/Idirect-Tech/Breeze-Java-SDK/blob/develop/jarbuild/breezeConnect-0.0.2-SNAPSHOT.jar" download>breezeconnect jar file </a>and include it in the build path of the  project.</b>
+<h4>Usage</h4>
+
+Download the jar file of the project from the following link <a href = "https://github.com/Idirect-Tech/Breeze-Java-SDK/blob/develop/jarbuild/breezeConnect-0.0.3-SNAPSHOT.jar" download>breezeconnect jar file </a>and include it in the build path of your  project.
 
 <h4 id="client">Breeze API Java Client</h4>
 
@@ -185,6 +187,7 @@ For Streaming OHLCV, interval must not be empty and must be equal to either of t
  <li><a href="#trade_list">getTradeList</a></li>
  <li><a href="#trade_detail">getTradeDetail</a></li>
  <li><a href="#get_names"> getNames </a></li>
+ <li><a href="#preview_order"> previewOrder </a></li>
 </ul>
 </div>
 
@@ -583,8 +586,7 @@ breezeConnect.squareOff(
 ```java
 breezeConnect.getTradeList(
     "2022-08-01T06:00:00.000Z","2022-08-19T06:00:00.000Z","NSE",
-    "","",""
-);
+    "","","");
 ```                        
 
 <p> Note: Please change exchange_code=“NFO” to get details about F&O</p>
@@ -614,4 +616,15 @@ breezeConnect.getNames('NSE','RELIANCE');
 ```
 <p>Note: Use this method to find ICICI specific stock codes / token </p>
 
+<a href="#index">Back to Index</a>
+
+<hr>
+
+<h4 id = "preview_order">Preview Order </h4>
+
+```java
+
+breezeConnect.previewOrder("ICIBAN","NSE", "margin","limit","907.05","buy","1","N");
+
+```
 <a href="#index">Back to Index</a>

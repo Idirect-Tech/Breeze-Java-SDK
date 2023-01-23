@@ -937,7 +937,75 @@ public class ApificationBreeze {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-    }public JSONObject getNames(String exchange, String stockcode) throws Exception
+    }
+
+    public JSONObject previewOrder(String stockCode,String exchangeCode,String productType,String orderType,String price,String action,String quantity,String expiryDate,String right,String strikePrice,String specialFlag,String stoploss, String orderRateFresh)
+    {
+        try
+        {
+            
+            if(exchangeCode.isBlank() || exchangeCode.isEmpty()){
+                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
+            }
+
+            else if(stockCode==null || stockCode.isEmpty())
+            {
+                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
+            }
+
+            else if(action.isBlank() || action.isEmpty())
+            {
+                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_ACTION));
+            }
+
+            else if(productType.isBlank() || productType.isEmpty())
+            {
+                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_PRODUCT_TYPE));
+            }
+
+            else if(orderType.isBlank() || orderType.isEmpty())
+            {
+                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_ORDER_TYPE));
+            }
+
+            else if(right.isBlank() || right.isEmpty())
+            {
+                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_RIGHT_TYPE));
+            } 
+
+            JSONObject body = new JSONObject();
+
+            body.put("stock_code:",stockCode);
+            body.put("exchange_code:",exchangeCode);
+            body.put("product:",productType);
+            body.put("order_type:",orderType);
+            body.put("price:",price);
+            body.put("action:",action);
+            body.put("quantity:",quantity);
+            body.put("expiry_date:",expiryDate);
+            body.put("right:",right);
+            body.put("strike_price:",strikePrice);
+            body.put("specialflag:",specialFlag);
+            body.put("stoploss:",stoploss);
+            body.put("order_rate_fresh:",orderRateFresh);
+
+
+            JSONArray headers = generateHeaders(body);
+            String response = makeRequest(
+                    config.apiMethods.get(Config.APIMethodEnum.POST),
+                    config.endPoints.get(Config.EndPointEnum.ORDER),
+                    body, headers
+            );
+            return new JSONObject(response);
+
+        }
+        catch(JSONException e)
+        {
+            throw new RuntimeException(e);
+        }   
+    }
+
+    public JSONObject getNames(String exchange, String stockcode) throws Exception
     {
         try
         {
