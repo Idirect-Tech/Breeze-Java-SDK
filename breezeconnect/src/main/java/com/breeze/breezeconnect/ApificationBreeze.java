@@ -968,32 +968,32 @@ public class ApificationBreeze {
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_ORDER_TYPE));
             }
 
-            else if(right.isBlank() || right.isEmpty())
-            {
-                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_RIGHT_TYPE));
-            } 
+            //else if(right.isBlank() || right.isEmpty())
+            //{
+            //    return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_RIGHT_TYPE));
+            //} 
 
             JSONObject body = new JSONObject();
 
-            body.put("stock_code:",stockCode);
-            body.put("exchange_code:",exchangeCode);
-            body.put("product:",productType);
-            body.put("order_type:",orderType);
-            body.put("price:",price);
-            body.put("action:",action);
-            body.put("quantity:",quantity);
-            body.put("expiry_date:",expiryDate);
-            body.put("right:",right);
-            body.put("strike_price:",strikePrice);
-            body.put("specialflag:",specialFlag);
-            body.put("stoploss:",stoploss);
-            body.put("order_rate_fresh:",orderRateFresh);
+            body.put("stock_code",stockCode);
+            body.put("exchange_code",exchangeCode);
+            body.put("product",productType);
+            body.put("order_type",orderType);
+            body.put("price",price);
+            body.put("action",action);
+            body.put("quantity",quantity);
+            body.put("expiry_date",expiryDate);
+            body.put("right",right);
+            body.put("strike_price",strikePrice);
+            body.put("specialflag",specialFlag);
+            body.put("stoploss",stoploss);
+            body.put("order_rate_fresh",orderRateFresh);
 
 
             JSONArray headers = generateHeaders(body);
             String response = makeRequest(
-                    config.apiMethods.get(Config.APIMethodEnum.POST),
-                    config.endPoints.get(Config.EndPointEnum.ORDER),
+                    config.apiMethods.get(Config.APIMethodEnum.GET),
+                    config.endPoints.get(Config.EndPointEnum.PREVIEW_ORDER),
                     body, headers
             );
             return new JSONObject(response);

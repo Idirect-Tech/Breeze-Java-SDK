@@ -18,34 +18,34 @@ public class Test {
 		try {
 
 			////////////////////////Initiate////////////////////////
-			JSONObject creds = new JSONObject("{\"vk\":{\"password\":\"905706\",\"dOB\":\"13111997\",\"appKey\":\"587D91M1504O1F16)21c13Z605p75W66\",\"secretKey\":\"8002xB729K086+3#4n7V4420^U8361)A\",\"idirect_Userid\":\"9167164146\"}}");
+			JSONObject creds = new JSONObject("{\"vk\":{\"password\":\"test1234\",\"dOB\":\"25051982\",\"appKey\":\"#aL9488x480^5E0744ws96969xZ@4GB2\",\"secretKey\":\"98a#305@7M1442yk6c9105CwY0956157\",\"idirect_Userid\":\"9833288070\"}}");
 			BreezeConnect breezeConnect = new BreezeConnect(creds.getJSONObject("vk").getString("appKey"));
 			String apiSession = getApiSession(creds,"vk");
 			breezeConnect.generateSession(creds.getJSONObject("vk").getString("secretKey"),apiSession);
 			//////////////////////Initiate End//////////////////////
 
 			////////////////////////WebSocket////////////////////////
-			breezeConnect.connectTicker();
-			breezeConnect.subscribeFeeds("13.1!9739");
+		//	breezeConnect.connectTicker();
+		//	breezeConnect.subscribeFeeds("13.1!9739");
 //			breezeConnect.subscribeFeeds("13.1!9739","1second");
 //			breezeConnect.subscribeFeeds("NSE","INFTEC","","","","",true,false);
 //			breezeConnect.watch(new String[] {"4.1!15083","4.2!11483","4.1!TCSEQ", "4.1!49937","4.1!11287"});
 //					breezeConnect.unWatch(new String[]{"4.2!11483","4.1!TCSEQ"});
-			breezeConnect.registerOnTickEventListener(new OnTickEventListener() {
+			/*breezeConnect.registerOnTickEventListener(new OnTickEventListener() {
 				@Override
 				public void onTickEvent(Object tick) {
 					System.out.println("Ticker data:");
 					System.out.println(tick.toString());
 				}
-			});
+			});*/
 			//////////////////////WebSocket End//////////////////////
 
 			///////////////////////////API///////////////////////////
 //			System.out.println(breezeConnect.getCustomerDetails(apiSession).toString());
 //			System.out.println(breezeConnect.getDematHoldings());  // RNA Error
-//			System.out.println(breezeConnect.getFunds());
+			System.out.println(breezeConnect.getFunds());
 //			System.out.println(breezeConnect.getPortfolioPositions());
-
+			System.out.println(breezeConnect.previewOrder("ICIBAN","NSE","margin","limit","907.05","buy","1","","","","N","",""));
 //			System.out.println(breezeConnect.setFunds("debit","200","Equity"));
 //			System.out.println(breezeConnect.getHistoricalDatav2("1minute","2022-04-01T00:00:00.000Z","2022-05-31T00:00:00.000Z","INFTEC","NSE","","","",""));
 //			System.out.println(breezeConnect.getHistoricalData("1minute","2021-11-15T07:00:00.000Z","2021-11-17T07:00:00.000Z",
