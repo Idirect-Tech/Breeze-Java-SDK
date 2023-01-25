@@ -14,7 +14,7 @@ public class Config {
     public enum EndPointEnum{
         CUST_DETAILS, DEMAT_HOLDING, FUND, HIST_CHART, MARGIN,
         ORDER, PORTFOLIO_HOLDING, PORTFOLIO_POSITION, QUOTE,
-        TRADE, OPT_CHAIN, SQUARE_OFF
+        TRADE, OPT_CHAIN, SQUARE_OFF,PREVIEW_ORDER
     }
 
     public enum UrlEnum{
@@ -105,6 +105,7 @@ public class Config {
             put(EndPointEnum.OPT_CHAIN,"optionchain");
             put(EndPointEnum.SQUARE_OFF,"squareoff");
             put(EndPointEnum.HIST_CHART,"historicalcharts");
+            put(EndPointEnum.PREVIEW_ORDER,"preview_order");
         }
         };
         createTuxMap();
