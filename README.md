@@ -102,10 +102,10 @@ breezeConnect.unsubscribeFeeds("NFO", "ZEEENT", "options", "31-Mar-2022", "350",
 breezeConnect.unsubscribeFeeds("1.1!500780","1second");
 
 // subscribe order notification feeds(it will connect to order streaming server)
-breezeConnect.subscribeFeeds(True)
+breezeConnect.subscribeFeeds(true)
 
 // unsubscribe order notification feeds(also it will disconnect the order streaming server)
-breezeConnect.unsubscribeFeeds(get_order_notification=True)
+breezeConnect.unsubscribeFeeds(get_order_notification=true)
 
 ```
 <br>
