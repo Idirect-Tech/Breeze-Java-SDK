@@ -113,21 +113,21 @@ public class Config {
         createExceptionMap();
         createTypeListMap();
 
-        isecNseCodeMapFile = new HashMap<>(){{
+        isecNseCodeMapFile = new HashMap<String,String>(){{
             put("nse","https://traderweb.icicidirect.com/Content/File/txtFile/ScripFile/NSEScripMaster.txt");
             put("bse","https://traderweb.icicidirect.com/Content/File/txtFile/ScripFile/BSEScripMaster.txt");
             put("cdnse","https://traderweb.icicidirect.com/Content/File/txtFile/ScripFile/CDNSEScripMaster.txt");
             put("fonse","https://traderweb.icicidirect.com/Content/File/txtFile/ScripFile/FONSEScripMaster.txt");
         }};
 
-        feedIntervalMap = new HashMap<>(){{
+        feedIntervalMap = new HashMap<String,String>(){{
             put("1MIN","1minute");
             put("5MIN","5minute");
             put("30MIN","30minute");
             put("1SEC","1second");
         }};
 
-        channelIntervalMap = new HashMap<>(){{
+        channelIntervalMap = new HashMap<String,String>(){{
             put("1minute","1MIN");
             put("5minute","5MIN");
             put("30minute","30MIN");
@@ -136,18 +136,18 @@ public class Config {
     }
 
     public void createTuxMap(){
-        tuxToUserValue = new HashMap<>(){{
-           put("orderFlow",new HashMap<>(){{
+        tuxToUserValue = new HashMap<String,Map<String,String>>(){{
+           put("orderFlow",new HashMap<String,String>(){{
                put("B","Buy");
                put("S","Sell");
                put("N","NA");
            }});
-            put("limitMarketFlag",new HashMap<>(){{
+            put("limitMarketFlag",new HashMap<String,String>(){{
                 put("L","Limit");
                 put("I","IoC");
                 put("V","VTC");
             }});
-            put("productType",new HashMap<>(){{
+            put("productType",new HashMap<String,String>(){{
                 put("F","Futures");
                 put("O","Options");
                 put("P","FuturePlus");
@@ -159,7 +159,7 @@ public class Config {
                 put("M","Margin");
                 put("T","MarginPlus");
             }});
-            put("orderStatus",new HashMap<>(){{
+            put("orderStatus",new HashMap<String,String>(){{
                 put("A","All");
                 put("R","Requested");
                 put("Q","Queued");
@@ -173,7 +173,7 @@ public class Config {
                 put("F", "Freezed");
                 put("C", "Cancelled");
             }});
-            put("optionType",new HashMap<>(){{
+            put("optionType",new HashMap<String,String>(){{
                 put("C","Call");
                 put("P","Put");
                 put("*","Others");

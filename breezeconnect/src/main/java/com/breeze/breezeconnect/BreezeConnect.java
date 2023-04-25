@@ -699,8 +699,8 @@ public class BreezeConnect extends ApificationBreeze {
             }
             return orderObject;
         }
-        var exchange = jArray.getString(0).split("!")[0].split("\\.")[0];
-        var data_type = jArray.getString(0).split("!")[0].split("\\.")[1];
+        String exchange = jArray.getString(0).split("!")[0].split("\\.")[0];
+        String data_type = jArray.getString(0).split("!")[0].split("\\.")[1];
         Dictionary feedObject = new Hashtable();
         if (data_type.matches("6")) {
             feedObject.put("Symbol", jArray.get(0));
