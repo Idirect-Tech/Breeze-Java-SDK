@@ -773,6 +773,56 @@ public class ApificationBreeze {
         }
     }
 
+    public JSONObject limitCalculator(String strikePrice, String productType, String expiryDate,String underlying,String exchangeCode,String orderFlow, String stoplossTrigger, String optionType,String sourceFlag,String limitRate,String orderReference,String availableQuantity,String marketType,String freshOrderLimit)
+    {
+        try
+        {
+            if(productType==null || productType.isEmpty() || productType.isBlank()){
+                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_PRODUCT_TYPE_NFO));
+            }
+            else if(exchangeCode.isBlank() || exchangeCode.isEmpty()){
+                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
+            }
+            else if(stoplossTrigger.isBlank() || stoplossTrigger.isEmpty()){
+                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_STOP_LOSS_TRIGGER));
+            }
+            else if(optionType.isBlank() || optionType.isEmpty())
+            {
+                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_OPTION_TYPE));
+            }
+            else if(strikePrice.isBlank() || strikePrice.isEmpty()){
+                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_STRIKE_PRICE));
+            }
+                JSONObject body = new JSONObject();
+                body.put("strike_price",strikePrice);                                    
+                body.put("product_type",productType);                 
+                body.put("expiry_date",expiryDate);
+                body.put("underlying",underlying);
+                body.put("exchange_code",exchangeCode);
+                body.put("order_flow",orderFlow);
+                body.put("stop_loss_trigger",stoplossTrigger);
+                body.put("option_type",optionType);
+                body.put("source_flag",sourceFlag)
+                body.put("limit_rate",limitRate);
+                body.put("order_reference",orderReference);
+                body.put("available_quantity",availableQuantity);
+                body.put("market_type", marketType);
+                body.put("fresh_order_limit",freshOrderLimit);
+
+            JSONArray headers = generateHeaders(body);
+                String response = makeRequest(
+                    config.apiMethods.get(Config.APIMethodEnum.POST),
+                    config.endPoints.get(Config.EndPointEnum.LIMIT_CALCULATOR),
+                    body, headers
+                );
+                return new JSONObject(response);
+        }
+        catch(JSONException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
     public JSONObject getOptionChainQuotes(String stockCode, String exchangeCode, String expiryDate, String productType, String right, String strikePrice){
       try{
             if(exchangeCode==null || exchangeCode.isBlank() || exchangeCode.isEmpty() || !exchangeCode.equalsIgnoreCase("nfo")){
@@ -1098,6 +1148,8 @@ public class ApificationBreeze {
             return(new JSONObject("{\n"+"status:404\n"+"}"));
         }
     }
+
+
 
 
 
