@@ -773,6 +773,7 @@ public class ApificationBreeze {
         }
     }
 
+    //public JSONObject marginCalculator()
     public JSONObject limitCalculator(String strikePrice, String productType, String expiryDate,String underlying,String exchangeCode,String orderFlow, String stoplossTrigger, String optionType,String sourceFlag,String limitRate,String orderReference,String availableQuantity,String marketType,String freshOrderLimit)
     {
         try
