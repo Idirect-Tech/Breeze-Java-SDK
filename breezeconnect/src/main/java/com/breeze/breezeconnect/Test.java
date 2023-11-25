@@ -18,7 +18,7 @@ public class Test {
 		try {
 
 			////////////////////////Initiate////////////////////////
-			JSONObject creds = new JSONObject("{\"vk\":{\"password\":\"*****\",\"dOB\":\"*****\",\"appKey\":\"***********\",\"secretKey\":\"***********\",\"idirect_Userid\":\"**********8\"}}");
+			JSONObject creds = new JSONObject("{\"vk\":{\"password\":\"****\",\"dOB\":\"****\",\"appKey\":\"*****\",\"secretKey\":\"*******\",\"idirect_Userid\":\"************\"}}");
 			BreezeConnect breezeConnect = new BreezeConnect(creds.getJSONObject("vk").getString("appKey"));
 			String apiSession = getApiSession(creds,"vk");
 			breezeConnect.generateSession(creds.getJSONObject("vk").getString("secretKey"),apiSession);

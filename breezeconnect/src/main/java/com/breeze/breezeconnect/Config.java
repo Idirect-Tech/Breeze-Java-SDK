@@ -14,7 +14,7 @@ public class Config {
     public enum EndPointEnum{
         CUST_DETAILS, DEMAT_HOLDING, FUND, HIST_CHART, MARGIN,
         ORDER, PORTFOLIO_HOLDING, PORTFOLIO_POSITION, QUOTE,
-        TRADE, OPT_CHAIN, SQUARE_OFF,PREVIEW_ORDER
+        TRADE, OPT_CHAIN, SQUARE_OFF,PREVIEW_ORDER,LIMIT_CALCULATOR,MARGIN_CALCULATOR
     }
 
     public enum UrlEnum{
@@ -29,7 +29,7 @@ public class Config {
         BLANK_PRODUCT_TYPE_HIST_V2, BLANK_ORDER_TYPE, BLANK_QUANTITY, BLANK_VALIDITY, BLANK_ORDER_ID,
         BLANK_FROM_DATE, BLANK_TO_DATE, BLANK_TRANSACTION_TYPE, BLANK_AMOUNT, BLANK_SEGMENT,BLANK_INTERVAL,
         BLANK_STRIKE_PRICE, BLANK_EXPIRY_DATE, BLANK_RIGHT_STRIKE_PRICE,BLANK_RIGHT_EXPIRY_DATE, BLANK_EXPIRY_DATE_STRIKE_PRICE,
-        BLANK_RIGHT_TYPE,
+        BLANK_RIGHT_TYPE,BLANK_STOP_LOSS_TRIGGER,BLANK_OPTION_TYPE
 
         //Validation Errors
         EXCHANGE_CODE_ERROR ,EXCHANGE_CODE_HIST_V2_ERROR, PRODUCT_TYPE_ERROR , PRODUCT_TYPE_ERROR_NFO, PRODUCT_TYPE_ERROR_HIST_V2,
@@ -106,6 +106,8 @@ public class Config {
             put(EndPointEnum.SQUARE_OFF,"squareoff");
             put(EndPointEnum.HIST_CHART,"historicalcharts");
             put(EndPointEnum.PREVIEW_ORDER,"preview_order");
+            put(EndPointEnum.LIMIT_CALCULATOR,"fnolmtpriceandqtycal");
+            put(EndPointEnum.MARGIN_CALCULATOR,"margincalculator");
         }
         };
         createTuxMap();
@@ -113,21 +115,21 @@ public class Config {
         createExceptionMap();
         createTypeListMap();
 
-        isecNseCodeMapFile = new HashMap<>(){{
+        isecNseCodeMapFile = new HashMap<String,String>(){{
             put("nse","https://traderweb.icicidirect.com/Content/File/txtFile/ScripFile/NSEScripMaster.txt");
             put("bse","https://traderweb.icicidirect.com/Content/File/txtFile/ScripFile/BSEScripMaster.txt");
             put("cdnse","https://traderweb.icicidirect.com/Content/File/txtFile/ScripFile/CDNSEScripMaster.txt");
             put("fonse","https://traderweb.icicidirect.com/Content/File/txtFile/ScripFile/FONSEScripMaster.txt");
         }};
 
-        feedIntervalMap = new HashMap<>(){{
+        feedIntervalMap = new HashMap<String,String>(){{
             put("1MIN","1minute");
             put("5MIN","5minute");
             put("30MIN","30minute");
             put("1SEC","1second");
         }};
 
-        channelIntervalMap = new HashMap<>(){{
+        channelIntervalMap = new HashMap<String,String>(){{
             put("1minute","1MIN");
             put("5minute","5MIN");
             put("30minute","30MIN");
@@ -136,18 +138,18 @@ public class Config {
     }
 
     public void createTuxMap(){
-        tuxToUserValue = new HashMap<>(){{
-           put("orderFlow",new HashMap<>(){{
+        tuxToUserValue = new HashMap<String,Map<String,String>>(){{
+           put("orderFlow",new HashMap<String,String>(){{
                put("B","Buy");
                put("S","Sell");
                put("N","NA");
            }});
-            put("limitMarketFlag",new HashMap<>(){{
+            put("limitMarketFlag",new HashMap<String,String>(){{
                 put("L","Limit");
                 put("I","IoC");
                 put("V","VTC");
             }});
-            put("productType",new HashMap<>(){{
+            put("productType",new HashMap<String,String>(){{
                 put("F","Futures");
                 put("O","Options");
                 put("P","FuturePlus");
@@ -159,7 +161,7 @@ public class Config {
                 put("M","Margin");
                 put("T","MarginPlus");
             }});
-            put("orderStatus",new HashMap<>(){{
+            put("orderStatus",new HashMap<String,String>(){{
                 put("A","All");
                 put("R","Requested");
                 put("Q","Queued");
@@ -173,7 +175,7 @@ public class Config {
                 put("F", "Freezed");
                 put("C", "Cancelled");
             }});
-            put("optionType",new HashMap<>(){{
+            put("optionType",new HashMap<String,String>(){{
                 put("C","Call");
                 put("P","Put");
                 put("*","Others");
@@ -207,6 +209,8 @@ public class Config {
             put(ResponseEnum.BLANK_RIGHT_STRIKE_PRICE,"Either Right or Strike-Price cannot be empty.");
             put(ResponseEnum.BLANK_RIGHT_EXPIRY_DATE,"Either Expiry-Date or Right cannot be empty.");
             put(ResponseEnum.BLANK_EXPIRY_DATE_STRIKE_PRICE,"Either Expiry-Date or Strike-Price cannot be empty.");
+            put(ResponseEnum.BLANK_STOP_LOSS_TRIGGER,"stop loss trigger cannot be blank");
+            put(ResponseEnum.BLANK_OPTION_TYPE, "option type cannot be blank");
 
             //Validation Errors
             put(ResponseEnum.EXCHANGE_CODE_ERROR,"Exchange-Code should be either 'nse', or 'nfo'");
