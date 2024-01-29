@@ -86,7 +86,7 @@ public class Config {
            put(UrlEnum.API_URL,"https://api.icicidirect.com/breezeapi/api/v1/");
            put(UrlEnum.BREEZE_NEW_URL,"https://breezeapi.icicidirect.com/api/v2/");
            put(UrlEnum.LIVE_FEEDS_URL,"https://livefeeds.icicidirect.com");
-           put(UrlEnum.LIVE_STREAM_URL,"https://streams.icicidirect.com");
+           put(UrlEnum.LIVE_STREAM_URL,"https://livestream.icicidirect.com");
            put(UrlEnum.LIVE_OHLC_STREAM_URL,"https://breezeapi.icicidirect.com");
            put(UrlEnum.SECURITY_MASTER_URL,"https://directlink.icicidirect.com/NewSecurityMaster/SecurityMaster.zip");
            put(UrlEnum.STOCK_SCRIPT_CSV_URL,"https://traderweb.icicidirect.com/Content/File/txtFile/ScripFile/StockScriptNew.csv");
