@@ -29,7 +29,7 @@ public class Config {
         BLANK_PRODUCT_TYPE_HIST_V2, BLANK_ORDER_TYPE, BLANK_QUANTITY, BLANK_VALIDITY, BLANK_ORDER_ID,
         BLANK_FROM_DATE, BLANK_TO_DATE, BLANK_TRANSACTION_TYPE, BLANK_AMOUNT, BLANK_SEGMENT,BLANK_INTERVAL,
         BLANK_STRIKE_PRICE, BLANK_EXPIRY_DATE, BLANK_RIGHT_STRIKE_PRICE,BLANK_RIGHT_EXPIRY_DATE, BLANK_EXPIRY_DATE_STRIKE_PRICE,
-        BLANK_RIGHT_TYPE,BLANK_STOP_LOSS_TRIGGER,BLANK_OPTION_TYPE
+        BLANK_RIGHT_TYPE,BLANK_STOP_LOSS_TRIGGER,BLANK_OPTION_TYPE,
 
         //Validation Errors
         EXCHANGE_CODE_ERROR ,EXCHANGE_CODE_HIST_V2_ERROR, PRODUCT_TYPE_ERROR , PRODUCT_TYPE_ERROR_NFO, PRODUCT_TYPE_ERROR_HIST_V2,
@@ -76,20 +76,20 @@ public class Config {
     public Config(){
 
         apiMethods = new EnumMap<APIMethodEnum, String>(APIMethodEnum.class){{
-           put(APIMethodEnum.GET,"GET");
-           put(APIMethodEnum.POST,"POST");
-           put(APIMethodEnum.PUT,"PUT");
-           put(APIMethodEnum.DELETE,"DELETE");
+            put(APIMethodEnum.GET,"GET");
+            put(APIMethodEnum.POST,"POST");
+            put(APIMethodEnum.PUT,"PUT");
+            put(APIMethodEnum.DELETE,"DELETE");
         }};
 
         urls = new EnumMap<UrlEnum, String>(UrlEnum.class){{
-           put(UrlEnum.API_URL,"https://api.icicidirect.com/breezeapi/api/v1/");
-           put(UrlEnum.BREEZE_NEW_URL,"https://breezeapi.icicidirect.com/api/v2/");
-           put(UrlEnum.LIVE_FEEDS_URL,"https://livefeeds.icicidirect.com");
-           put(UrlEnum.LIVE_STREAM_URL,"https://livestream.icicidirect.com");
-           put(UrlEnum.LIVE_OHLC_STREAM_URL,"https://breezeapi.icicidirect.com");
-           put(UrlEnum.SECURITY_MASTER_URL,"https://directlink.icicidirect.com/NewSecurityMaster/SecurityMaster.zip");
-           put(UrlEnum.STOCK_SCRIPT_CSV_URL,"https://traderweb.icicidirect.com/Content/File/txtFile/ScripFile/StockScriptNew.csv");
+            put(UrlEnum.API_URL,"https://api.icicidirect.com/breezeapi/api/v1/");
+            put(UrlEnum.BREEZE_NEW_URL,"https://breezeapi.icicidirect.com/api/v2/");
+            put(UrlEnum.LIVE_FEEDS_URL,"https://livefeeds.icicidirect.com");
+            put(UrlEnum.LIVE_STREAM_URL,"https://livestream.icicidirect.com");
+            put(UrlEnum.LIVE_OHLC_STREAM_URL,"https://breezeapi.icicidirect.com");
+            put(UrlEnum.SECURITY_MASTER_URL,"https://directlink.icicidirect.com/NewSecurityMaster/SecurityMaster.zip");
+            put(UrlEnum.STOCK_SCRIPT_CSV_URL,"https://traderweb.icicidirect.com/Content/File/txtFile/ScripFile/StockScriptNew.csv");
         }};
 
         endPoints = new EnumMap<EndPointEnum, String>(EndPointEnum.class){{
@@ -139,11 +139,11 @@ public class Config {
 
     public void createTuxMap(){
         tuxToUserValue = new HashMap<String,Map<String,String>>(){{
-           put("orderFlow",new HashMap<String,String>(){{
-               put("B","Buy");
-               put("S","Sell");
-               put("N","NA");
-           }});
+            put("orderFlow",new HashMap<String,String>(){{
+                put("B","Buy");
+                put("S","Sell");
+                put("N","NA");
+            }});
             put("limitMarketFlag",new HashMap<String,String>(){{
                 put("L","Limit");
                 put("I","IoC");
@@ -274,18 +274,18 @@ public class Config {
 
     public void createTypeListMap(){
         typeLists = new EnumMap<ListEnum, String[]>(ListEnum.class){{
-           put(ListEnum.INTERVAL_TYPES,new String[]{"1minute", "5minute", "30minute", "1day"});
-           put(ListEnum.INTERVAL_TYPES_HIST_V2,new String[]{"1second","1minute", "5minute", "30minute", "1day"});
-           put(ListEnum.INTERVAL_TYPES_STREAM_OHLC,new String[]{"1second","1minute", "5minute", "30minute"});
-           put(ListEnum.PRODUCT_TYPES, new String[]{"futures", "options", "futureplus", "optionplus", "cash", "eatm", "margin"});
-           put(ListEnum.PRODUCT_TYPES_HIST, new String[]{"futures", "options", "futureplus", "optionplus"});
-           put(ListEnum.PRODUCT_TYPES_HIST_V2, new String[]{"futures", "options","cash"});
-           put(ListEnum.RIGHT_TYPES,new String[]{"call", "put", "others"});
-           put(ListEnum.ACTION_TYPES,new String[]{"buy", "sell"});
-           put(ListEnum.VALIDITY_TYPES,new String[]{"day", "ioc", "vtc"});
-           put(ListEnum.TRANSACTION_TYPES,new String[]{"debit", "credit"});
-           put(ListEnum.EXCHANGE_CODES_HIST,new String[]{"nse", "nfo"});
-           put(ListEnum.EXCHANGE_CODES_HIST_V2,new String[]{"nse","bse","nfo","ndx","mcx"});
+            put(ListEnum.INTERVAL_TYPES,new String[]{"1minute", "5minute", "30minute", "1day"});
+            put(ListEnum.INTERVAL_TYPES_HIST_V2,new String[]{"1second","1minute", "5minute", "30minute", "1day"});
+            put(ListEnum.INTERVAL_TYPES_STREAM_OHLC,new String[]{"1second","1minute", "5minute", "30minute"});
+            put(ListEnum.PRODUCT_TYPES, new String[]{"futures", "options", "futureplus", "optionplus", "cash", "eatm", "margin"});
+            put(ListEnum.PRODUCT_TYPES_HIST, new String[]{"futures", "options", "futureplus", "optionplus"});
+            put(ListEnum.PRODUCT_TYPES_HIST_V2, new String[]{"futures", "options","cash"});
+            put(ListEnum.RIGHT_TYPES,new String[]{"call", "put", "others"});
+            put(ListEnum.ACTION_TYPES,new String[]{"buy", "sell"});
+            put(ListEnum.VALIDITY_TYPES,new String[]{"day", "ioc", "vtc"});
+            put(ListEnum.TRANSACTION_TYPES,new String[]{"debit", "credit"});
+            put(ListEnum.EXCHANGE_CODES_HIST,new String[]{"nse", "nfo"});
+            put(ListEnum.EXCHANGE_CODES_HIST_V2,new String[]{"nse","bse","nfo","ndx","mcx"});
         }};
     }
 }

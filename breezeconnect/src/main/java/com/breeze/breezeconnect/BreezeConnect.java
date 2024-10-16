@@ -60,11 +60,11 @@ public class BreezeConnect extends ApificationBreeze {
     }
 
     public void getStockScriptList(){
-        for(int i=0;i<5;i++){
+        for(int i=0;i<6;i++){
             JSONObject stockScript = new JSONObject();
             this.stockScriptDictList.add(stockScript);
         }
-        for(int i=0;i<5;i++){
+        for(int i=0;i<6;i++){
             JSONObject tokenScript = new JSONObject();
             this.tokenScriptDictList.add(tokenScript);
         }
@@ -121,6 +121,13 @@ public class BreezeConnect extends ApificationBreeze {
                         values.put(row[1]);
                         this.tokenScriptDictList.get(4).put(row[5],values);
                     }
+                    else if(row[2].equals("BFO")){
+                        this.stockScriptDictList.get(5).put(row[7],row[5]);
+                        JSONArray values = new JSONArray();
+                        values.put(row[3]);
+                        values.put(row[1]);
+                        this.tokenScriptDictList.get(5).put(row[5],values);
+                    }
                 }
             } finally {
                 client.close();
@@ -140,6 +147,7 @@ public class BreezeConnect extends ApificationBreeze {
         exchangeCodeList.put("4","NSE");
         exchangeCodeList.put("13","NDX");
         exchangeCodeList.put("6","MCX");
+        exchangeCodeList.put("8","BFO");
         String exchangeCodeName = exchangeCodeList.getOrDefault(exchangeType,"");
         JSONArray stockData = new JSONArray();
         stockData = null;
@@ -148,9 +156,15 @@ public class BreezeConnect extends ApificationBreeze {
         }
         else if(exchangeCodeName.toLowerCase().equals("bse")){
             stockData = this.tokenScriptDictList.get(0).optJSONArray(stockToken);
-            if(stockData == null){
-                this.errorException(String.format(config.exceptionMessage.get(Config.ExceptionEnum.STOCK_NOT_EXIST_EXCEPTION), "BSE",inputStockToken));
-            }
+                if(stockData == null){
+                    stockData = this.tokenScriptDictList.get(5).optJSONArray(stockToken);
+                    if(stockData == null){
+                        this.errorException(String.format(config.exceptionMessage.get(Config.ExceptionEnum.STOCK_NOT_EXIST_EXCEPTION),"i.e. BSE or BFO.",inputStockToken));
+                    }
+                    else{
+                        exchangeCodeName="BFO";
+                    }
+                }
 
         }
         else if(exchangeCodeName.toLowerCase().equals("nse")){
@@ -173,6 +187,10 @@ public class BreezeConnect extends ApificationBreeze {
             stockData = this.tokenScriptDictList.get(3).optJSONArray(stockToken);
             if(stockData == null)
                 this.errorException(String.format(config.exceptionMessage.get(Config.ExceptionEnum.STOCK_NOT_EXIST_EXCEPTION),"MCX",inputStockToken));
+        }  else if (exchangeCodeName.toLowerCase().equals("bfo")) {
+            stockData = this.tokenScriptDictList.get(5).optJSONArray(stockToken);
+            if(stockData == null)
+                this.errorException(String.format(config.exceptionMessage.get(Config.ExceptionEnum.STOCK_NOT_EXIST_EXCEPTION),"BFO",inputStockToken));
         }
 
         outputData.put("stock_name",stockData.get(1));
@@ -208,7 +226,7 @@ public class BreezeConnect extends ApificationBreeze {
     }
 
     public Map<String,String> getStockTokenValue(String exchangeCode, String stockCode, String productType, String expiryDate, String strikePrice,
-                                              String right,boolean getExchangeQuotes,boolean getMarketDepth) throws Exception{
+                                                 String right,boolean getExchangeQuotes,boolean getMarketDepth) throws Exception{
         if(!getExchangeQuotes && !getMarketDepth)
             this.errorException(config.exceptionMessage.get(Config.ExceptionEnum.QUOTE_DEPTH_EXCEPTION));
         else {
@@ -218,10 +236,16 @@ public class BreezeConnect extends ApificationBreeze {
             exchangeCodeList.put("NDX", "13.");
             exchangeCodeList.put("MCX", "6.");
             exchangeCodeList.put("NFO", "4.");
+            exchangeCodeList.put("BFO", "2.");
+
+            if ((this.interval == null) || (this.interval == "") ){
+                exchangeCodeList.put("BFO", "8.");
+            }
+
             String exchangeCodeName = exchangeCodeList.getOrDefault(exchangeCode, "");
-            if (Objects.isNull(exchangeCodeName) || exchangeCodeName.isEmpty() || exchangeCodeName.isBlank())
+            if (Objects.isNull(exchangeCodeName) || exchangeCodeName.isEmpty() || exchangeCodeName.trim().isEmpty())
                 this.errorException(config.exceptionMessage.get(Config.ExceptionEnum.EXCHANGE_CODE_EXCEPTION));
-            else if (Objects.isNull(stockCode) || stockCode.isEmpty() || stockCode.isBlank())
+            else if (Objects.isNull(stockCode) || stockCode.isEmpty() || stockCode.trim().isEmpty())
                 this.errorException(config.exceptionMessage.get(Config.ExceptionEnum.STOCK_CODE_EXCEPTION));
             else {
                 String tokenValue = "";
@@ -260,6 +284,8 @@ public class BreezeConnect extends ApificationBreeze {
                         tokenValue = this.stockScriptDictList.get(3).optString(contractDetailValue, "");
                     else if (exchangeCode.toLowerCase().equals("nfo"))
                         tokenValue = this.stockScriptDictList.get(4).optString(contractDetailValue, "");
+                    else if (exchangeCode.toLowerCase().equals("bfo"))
+                        tokenValue = this.stockScriptDictList.get(5).optString(contractDetailValue, "");
                 }
 
                 if (tokenValue.equals(""))
@@ -300,7 +326,7 @@ public class BreezeConnect extends ApificationBreeze {
             HttpEntity responseEntity = response.getEntity();
             String responseString = EntityUtils.toString(responseEntity, "UTF-8");
             JSONObject responseJson = new JSONObject(responseString);
-            if (responseJson.has("Success") && !responseJson.isNull("Success") && !responseJson.getString("Success").isEmpty() && !responseJson.getString("Success").isBlank()) {
+            if (responseJson.has("Success") && !responseJson.isNull("Success") && !responseJson.getString("Success").isEmpty() && !responseJson.getString("Success").trim().isEmpty()) {
                 JSONObject successJson = new JSONObject(responseJson.getString("Success"));
                 String base64SessionToken = successJson.get("session_token").toString();
                 this.setSession(this.apiKey,secretKey,base64SessionToken);
@@ -354,9 +380,10 @@ public class BreezeConnect extends ApificationBreeze {
         }
 
     }
-    void connectTicker()
+    public void connectTicker()
     {
         this.connect(false,false);
+
     }
 
     private void watch(String[] stocks) {
@@ -393,8 +420,8 @@ public class BreezeConnect extends ApificationBreeze {
 
     public JSONObject subscribeFeeds(String stockToken) throws Exception {
         try {
-            if(Objects.isNull(stockToken) || stockToken.isEmpty() || stockToken.isBlank())
-                  return this.socketConnectionResponse(config.responseMessage.get(Config.ResponseEnum.BLANK_STOCK_CODE));
+            if(Objects.isNull(stockToken) || stockToken.isEmpty() || stockToken.trim().isEmpty())
+                return this.socketConnectionResponse(config.responseMessage.get(Config.ResponseEnum.BLANK_STOCK_CODE));
             this.watch(new String[] {stockToken});
             return this.socketConnectionResponse(String.format(config.responseMessage.get(Config.ResponseEnum.STOCK_SUBSCRIBE_MESSAGE), stockToken));
         }
@@ -416,7 +443,7 @@ public class BreezeConnect extends ApificationBreeze {
                 this.errorException(config.exceptionMessage.get(Config.ExceptionEnum.STREAM_OHLC_INTERVAL_ERROR));
             }
             this.connect(false,true);
-            if(Objects.isNull(stockToken) || stockToken.isEmpty() || stockToken.isBlank())
+            if(Objects.isNull(stockToken) || stockToken.isEmpty() || stockToken.trim().isEmpty())
                 return this.socketConnectionResponse(config.responseMessage.get(Config.ResponseEnum.BLANK_STOCK_CODE));
             this.watchOHLC(new String[] {stockToken});
             return this.socketConnectionResponse(String.format(config.responseMessage.get(Config.ResponseEnum.STOCK_SUBSCRIBE_MESSAGE), stockToken));
@@ -450,6 +477,8 @@ public class BreezeConnect extends ApificationBreeze {
         try {
             Map<String, String> tokenObject = this.getStockTokenValue(exchangeCode, stockCode, productType, expiryDate, strikePrice, right,
                     getExchangeQuotes, getMarketDepth);
+
+
             if(!tokenObject.getOrDefault("exchangeQuotesToken","").equals(""))
                 this.watch(new String[] {tokenObject.get("exchangeQuotesToken")});
             if(!tokenObject.getOrDefault("marketDepthToken","").equals(""))
@@ -489,7 +518,7 @@ public class BreezeConnect extends ApificationBreeze {
 
     public JSONObject unsubscribeFeeds(String stockToken) throws Exception {
         try {
-            if(Objects.isNull(stockToken) || stockToken.isEmpty() || stockToken.isBlank())
+            if(Objects.isNull(stockToken) || stockToken.isEmpty() || stockToken.trim().isEmpty())
                 return this.socketConnectionResponse(config.responseMessage.get(Config.ResponseEnum.BLANK_STOCK_CODE));
             this.unWatch(new String[] {stockToken});
             return this.socketConnectionResponse(String.format(config.responseMessage.get(Config.ResponseEnum.STOCK_UNSUBSCRIBE_MESSAGE), stockToken));
@@ -502,7 +531,7 @@ public class BreezeConnect extends ApificationBreeze {
 
     public JSONObject unsubscribeFeeds(String stockToken,String interval) throws Exception {
         try {
-            if(Objects.isNull(stockToken) || stockToken.isEmpty() || stockToken.isBlank())
+            if(Objects.isNull(stockToken) || stockToken.isEmpty() || stockToken.trim().isEmpty())
                 return this.socketConnectionResponse(config.responseMessage.get(Config.ResponseEnum.BLANK_STOCK_CODE));
             this.unWatchOHLC(new String[] {stockToken});
             return this.socketConnectionResponse(String.format(config.responseMessage.get(Config.ResponseEnum.STOCK_UNSUBSCRIBE_MESSAGE), stockToken));
@@ -612,6 +641,7 @@ public class BreezeConnect extends ApificationBreeze {
         //decode csv array to json payload
         Dictionary orderObject = new Hashtable();
         JSONArray jArray = (JSONArray) data;
+//        System.out.println(jArray);
         if (jArray!=null && jArray.get(0).getClass().getSimpleName().equals("String") && jArray.get(0).toString().indexOf('!')<0){
             orderObject.put("sourceNumber", jArray.get(0));                         //Source Number
             orderObject.put("group", jArray.get(1));                                //Group
@@ -775,6 +805,43 @@ public class BreezeConnect extends ApificationBreeze {
                 feedObject.put("ltt", dateParse(jArray.getInt(21)));
                 feedObject.put("close", jArray.get(22));
             }
+        } else if (data_type.matches("8")) {
+            feedObject.put("symbol", jArray.get(0));
+            feedObject.put("open", jArray.get(1));
+            feedObject.put("last", jArray.get(2));
+            feedObject.put("high", jArray.get(3));
+            feedObject.put("low", jArray.get(4));
+            feedObject.put("change", jArray.get(5));
+            feedObject.put("bPrice", jArray.get(6));
+            feedObject.put("bQty", jArray.get(7));
+            feedObject.put("sPrice", jArray.get(8));
+            feedObject.put("sQty", jArray.get(9));
+            feedObject.put("ltq", jArray.get(10));
+            feedObject.put("avgPrice", jArray.get(11));
+            feedObject.put("quotes", "Quotes Data");
+            if (jArray.length() == 21) {
+                feedObject.put("ttq", jArray.get(12));
+                feedObject.put("totalBuyQt", jArray.get(13));
+                feedObject.put("totalSellQ", jArray.get(14));
+                feedObject.put("ttv", jArray.get(15));
+                feedObject.put("trend", jArray.get(16));
+                feedObject.put("lowerCktLm", jArray.get(17));
+                feedObject.put("upperCktLm", jArray.get(18));
+                feedObject.put("ltt", dateParse(jArray.getInt(19)));
+                feedObject.put("close", jArray.get(20));
+            } else if (jArray.length() == 23) {
+                feedObject.put("OI", jArray.get(12));
+                feedObject.put("CHNGOI", jArray.get(13));
+                feedObject.put("ttq", jArray.get(14));
+                feedObject.put("totalBuyQt", jArray.get(15));
+                feedObject.put("totalSellQ", jArray.get(16));
+                feedObject.put("ttv", jArray.get(17));
+                feedObject.put("trend", jArray.get(18));
+                feedObject.put("lowerCktLm", jArray.get(19));
+                feedObject.put("upperCktLm", jArray.get(20));
+                feedObject.put("ltt", dateParse(jArray.getInt(21)));
+                feedObject.put("close", jArray.get(22));
+            }
         } else {
             feedObject.put("symbol", jArray.get(0));
             feedObject.put("time", dateParse(jArray.getInt(1)));
@@ -791,6 +858,8 @@ public class BreezeConnect extends ApificationBreeze {
             feedObject.put("exchange", "NSE Futures & Options");
         } else if (exchange.matches("6")) {
             feedObject.put("exchange", "Commodity");
+        } else if (exchange.matches("8") && jArray.length() == 23) {
+            feedObject.put("exchange", "BSE Futures & Options");
         }
 
         try {
@@ -827,7 +896,7 @@ public class BreezeConnect extends ApificationBreeze {
                 put("datetime",arrayData[7]);
             }};
         }
-        else if(Objects.equals(arrayData[0], "NFO") || Objects.equals(arrayData[0], "NDX") || Objects.equals(arrayData[0], "MCX")) {
+        else if(Objects.equals(arrayData[0], "NFO") || Objects.equals(arrayData[0], "NDX") || Objects.equals(arrayData[0], "MCX") || Objects.equals(arrayData[0], "BFO" )) {
             if(arrayData.length==13){
                 candleData = new JSONObject() {{
                     put("interval",config.feedIntervalMap.get(arrayData[12]));
@@ -869,13 +938,18 @@ public class BreezeConnect extends ApificationBreeze {
             this.socket.on("stock", (Listener) new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
+                    //System.out.println(args[0]);
+                    //System.out.println(mListener);
                     if (mListener != null) {
                         Object data = null;
                         try {
                             data = parseData(args[0]);
+                            //data = args[0];
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                        //System.out.println(data);
+                        //mListener.onTickEvent(data);
                         mListener.onTickEvent(data);
                     }
                 }
