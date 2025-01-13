@@ -505,9 +505,9 @@ public class ApificationBreeze {
             else if(orderType.trim().isEmpty() || orderType.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_ORDER_TYPE));
             }
-            else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.ORDER_TYPES))).contains(orderType.toLowerCase())){
-                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.ORDER_TYPE_ERROR));
-            }
+//            else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.ORDER_TYPES))).contains(orderType.toLowerCase())){
+//                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.ORDER_TYPE_ERROR));
+//            }
             else if(quantity.trim().isEmpty() || quantity.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_QUANTITY));
             }
@@ -1150,9 +1150,4 @@ public class ApificationBreeze {
             return(new JSONObject("{\n"+"status:404\n"+"}"));
         }
     }
-
-
-
-
-
 }
