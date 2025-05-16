@@ -32,7 +32,7 @@ public class Config {
         BLANK_RIGHT_TYPE,BLANK_STOP_LOSS_TRIGGER,BLANK_OPTION_TYPE,
 
         //Validation Errors
-        EXCHANGE_CODE_ERROR ,EXCHANGE_CODE_HIST_V2_ERROR, PRODUCT_TYPE_ERROR , PRODUCT_TYPE_ERROR_NFO, PRODUCT_TYPE_ERROR_HIST_V2,
+        EXCHANGE_CODE_ERROR ,EXCHANGE_CODE_HIST_V2_ERROR, PRODUCT_TYPE_ERROR , PRODUCT_TYPE_ERROR_NFO_BFO, PRODUCT_TYPE_ERROR_HIST_V2,
         ACTION_TYPE_ERROR, ORDER_TYPE_ERROR, VALIDITY_TYPE_ERROR, RIGHT_TYPE_ERROR, TRANSACTION_TYPE_ERROR, ZERO_AMOUNT_ERROR,
         INTERVAL_TYPE_ERROR,INTERVAL_TYPE_ERROR_HIST_V2,API_SESSION_ERROR, OPT_CHAIN_EXCH_CODE_ERROR, NFO_FIELDS_MISSING_ERROR,
 
@@ -191,7 +191,7 @@ public class Config {
             put(ResponseEnum.BLANK_STOCK_CODE,"Stock-Code cannot be empty");
             put(ResponseEnum.BLANK_PRODUCT_TYPE,"Product cannot be empty");
             put(ResponseEnum.BLANK_PRODUCT_TYPE_NFO,"Product-type cannot be empty for Exchange-Code 'nfo'");
-            put(ResponseEnum.BLANK_PRODUCT_TYPE_HIST_V2,"Product-type cannot be empty for Exchange-Code 'nfo','ndx' or 'mcx'");
+            put(ResponseEnum.BLANK_PRODUCT_TYPE_HIST_V2,"Product-type cannot be empty for Exchange-Code 'nfo','ndx', 'mcx' or 'bfo");
             put(ResponseEnum.BLANK_ACTION,"Action cannot be empty");
             put(ResponseEnum.BLANK_ORDER_TYPE,"Order-type cannot be empty");
             put(ResponseEnum.BLANK_QUANTITY,"Quantity cannot be empty");
@@ -205,7 +205,7 @@ public class Config {
             put(ResponseEnum.BLANK_INTERVAL,"Interval cannot be empty");
             put(ResponseEnum.BLANK_RIGHT_TYPE,"Right cannot be empty for Product-Type");
             put(ResponseEnum.BLANK_STRIKE_PRICE,"Strike-Price cannot be empty for Product-Type 'options'");
-            put(ResponseEnum.BLANK_EXPIRY_DATE,"Expiry-Date cannot be empty for exchange-code 'nfo'");
+            put(ResponseEnum.BLANK_EXPIRY_DATE,"Expiry-Date cannot be empty for exchange-code 'nfo' and 'bfo'");
             put(ResponseEnum.BLANK_RIGHT_STRIKE_PRICE,"Either Right or Strike-Price cannot be empty.");
             put(ResponseEnum.BLANK_RIGHT_EXPIRY_DATE,"Either Expiry-Date or Right cannot be empty.");
             put(ResponseEnum.BLANK_EXPIRY_DATE_STRIKE_PRICE,"Either Expiry-Date or Strike-Price cannot be empty.");
@@ -213,11 +213,11 @@ public class Config {
             put(ResponseEnum.BLANK_OPTION_TYPE, "option type cannot be blank");
 
             //Validation Errors
-            put(ResponseEnum.EXCHANGE_CODE_ERROR,"Exchange-Code should be either 'nse', or 'nfo'");
-            put(ResponseEnum.EXCHANGE_CODE_HIST_V2_ERROR,"Exchange-Code should be either 'nse', 'bse' ,'nfo', 'ndx' or 'mcx'");
+            put(ResponseEnum.EXCHANGE_CODE_ERROR,"Exchange-Code should be either 'nse', 'nfo' or 'bfo'");
+            put(ResponseEnum.EXCHANGE_CODE_HIST_V2_ERROR,"Exchange-Code should be either 'nse', 'bse' ,'nfo', 'ndx', 'mcx' or 'bfo'");
             put(ResponseEnum.PRODUCT_TYPE_ERROR,"Product should be either 'futures', 'options', 'futureplus', 'optionplus', 'cash', 'eatm', or 'margin'");
-            put(ResponseEnum.PRODUCT_TYPE_ERROR_NFO,"Product-type should be either 'futures', 'options', 'futureplus', or 'optionplus' for Exchange-Code 'NFO'");
-            put(ResponseEnum.PRODUCT_TYPE_ERROR_HIST_V2,"Product-type should be either 'futures', 'options' for Exchange-Code 'NFO','NDX' or 'MCX'");
+            put(ResponseEnum.PRODUCT_TYPE_ERROR_NFO_BFO,"Product-type should be either 'futures', 'options', 'futureplus', or 'optionplus' for Exchange-Code 'NFO' or 'BFO'");
+            put(ResponseEnum.PRODUCT_TYPE_ERROR_HIST_V2,"Product-type should be either 'futures', 'options' for Exchange-Code 'NFO','NDX', 'MCX' or 'BFO'");
             put(ResponseEnum.ACTION_TYPE_ERROR,"Action should be either 'buy', or 'sell'");
             put(ResponseEnum.ORDER_TYPE_ERROR,"Order-type should be either 'limit', 'market', or 'stoploss'");
             put(ResponseEnum.VALIDITY_TYPE_ERROR,"Validity should be either 'day', 'ioc', or 'vtc'");
@@ -227,7 +227,7 @@ public class Config {
             put(ResponseEnum.INTERVAL_TYPE_ERROR,"Interval should be either '1minute', '5minute', '30minute', or '1day'");
             put(ResponseEnum.INTERVAL_TYPE_ERROR_HIST_V2,"Interval should be either '1second','1minute', '5minute', '30minute', or '1day'");
             put(ResponseEnum.API_SESSION_ERROR,"API Session cannot be empty");
-            put(ResponseEnum.OPT_CHAIN_EXCH_CODE_ERROR,"Exchange code should be nfo");
+            put(ResponseEnum.OPT_CHAIN_EXCH_CODE_ERROR,"Exchange code should be nfo or bfo");
             put(ResponseEnum.NFO_FIELDS_MISSING_ERROR,"Atleast two inputs are required out of Expiry-Date, Right & Strike-Price. All three cannot be empty'.");
 
             //Socket Connectivity Response
@@ -254,7 +254,7 @@ public class Config {
 
             //Subscribe Exception
             put(ExceptionEnum.QUOTE_DEPTH_EXCEPTION,"Either getExchangeQuotes must be true or getMarketDepth must be true");
-            put(ExceptionEnum.EXCHANGE_CODE_EXCEPTION,"Exchange Code allowed are 'BSE', 'NSE', 'NDX', 'MCX' or 'NFO'.");
+            put(ExceptionEnum.EXCHANGE_CODE_EXCEPTION,"Exchange Code allowed are 'BSE', 'NSE', 'NDX', 'MCX', 'NFO' and 'BFO'.");
             put(ExceptionEnum.STOCK_CODE_EXCEPTION,"Stock-Code cannot be empty.");
             put(ExceptionEnum.EXPIRY_DATE_EXCEPTION,"Expiry-Date cannot be empty for given Exchange-Code.");
             put(ExceptionEnum.PRODUCT_TYPE_EXCEPTION,"Product-Type should either be Futures or Options for given Exchange-Code.");
@@ -284,8 +284,8 @@ public class Config {
             put(ListEnum.ACTION_TYPES,new String[]{"buy", "sell"});
             put(ListEnum.VALIDITY_TYPES,new String[]{"day", "ioc", "vtc"});
             put(ListEnum.TRANSACTION_TYPES,new String[]{"debit", "credit"});
-            put(ListEnum.EXCHANGE_CODES_HIST,new String[]{"nse", "nfo"});
-            put(ListEnum.EXCHANGE_CODES_HIST_V2,new String[]{"nse","bse","nfo","ndx","mcx"});
+            put(ListEnum.EXCHANGE_CODES_HIST,new String[]{"nse", "nfo", "bfo"});
+            put(ListEnum.EXCHANGE_CODES_HIST_V2,new String[]{"nse","bse","nfo","ndx","mcx", "bfo"});
         }};
     }
 }
