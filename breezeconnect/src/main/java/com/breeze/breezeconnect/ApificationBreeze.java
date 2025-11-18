@@ -132,7 +132,7 @@ public class ApificationBreeze {
 
     public JSONObject getCustomerDetails(String apiSession){
         try {
-            if(apiSession.isBlank() || apiSession.isEmpty()){
+            if(apiSession.trim().isEmpty() || apiSession.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.API_SESSION_ERROR));
             }
             JSONArray headers = new JSONArray();
@@ -156,9 +156,9 @@ public class ApificationBreeze {
             JSONObject body = new JSONObject("{}");
             JSONArray headers = generateHeaders(body);
             String response = makeRequest(
-                config.apiMethods.get(Config.APIMethodEnum.GET),
-                config.endPoints.get(Config.EndPointEnum.DEMAT_HOLDING),
-                body, headers
+                    config.apiMethods.get(Config.APIMethodEnum.GET),
+                    config.endPoints.get(Config.EndPointEnum.DEMAT_HOLDING),
+                    body, headers
             );
             return new JSONObject(response);
         } catch (JSONException e) {
@@ -185,19 +185,19 @@ public class ApificationBreeze {
 
     public JSONObject setFunds(String transactionType, String amount, String segment){
         try {
-            if(transactionType.isBlank() || transactionType.isEmpty()){
+            if(transactionType.trim().isEmpty() || transactionType.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_TRANSACTION_TYPE));
             }
             else if(!(Arrays.asList("debit","credit")).contains(transactionType.toLowerCase())){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.TRANSACTION_TYPE_ERROR));
             }
-            else if(amount.isBlank() || amount.isEmpty()){
+            else if(amount.trim().isEmpty() || amount.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_AMOUNT));
             }
             else if(Integer.parseInt(amount) < 0){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.ZERO_AMOUNT_ERROR));
             }
-            else if(segment.isBlank() || segment.isEmpty()){
+            else if(segment.trim().isEmpty() || segment.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_SEGMENT));
             }
             JSONObject body = new JSONObject(){{
@@ -207,9 +207,9 @@ public class ApificationBreeze {
             }};
             JSONArray headers = generateHeaders(body);
             String response = makeRequest(
-                config.apiMethods.get(Config.APIMethodEnum.POST),
-                config.endPoints.get(Config.EndPointEnum.FUND),
-                body, headers
+                    config.apiMethods.get(Config.APIMethodEnum.POST),
+                    config.endPoints.get(Config.EndPointEnum.FUND),
+                    body, headers
             );
             return new JSONObject(response);
         } catch (JSONException e) {
@@ -220,46 +220,46 @@ public class ApificationBreeze {
 
     public JSONObject getHistoricalData(String interval, String fromDate, String toDate, String stockCode, String exchangeCode, String productType, String expiryDate, String right, String strikePrice) {
         try {
-            if(interval.isBlank() || interval.isEmpty()){
+            if(interval.trim().isEmpty() || interval.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_INTERVAL));
             }
             else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.INTERVAL_TYPES))).contains(interval.toLowerCase())) {
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.INTERVAL_TYPE_ERROR));
             }
-            else if(exchangeCode.isBlank() || exchangeCode.isEmpty()){
+            else if(exchangeCode.trim().isEmpty() || exchangeCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
             }
             else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.EXCHANGE_CODES_HIST))).contains(exchangeCode.toLowerCase())) {
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.EXCHANGE_CODE_ERROR));
             }
-            else if(fromDate.isBlank() || fromDate.isEmpty()){
+            else if(fromDate.trim().isEmpty() || fromDate.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_FROM_DATE));
             }
-            else if(toDate.isBlank() || toDate.isEmpty()){
+            else if(toDate.trim().isEmpty() || toDate.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_TO_DATE));
             }
-            else if(stockCode.isBlank() || stockCode.isEmpty()){
+            else if(stockCode.trim().isEmpty() || stockCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_STOCK_CODE));
             }
-            else if(exchangeCode.equalsIgnoreCase("nfo")){
-                if(productType.isBlank() || productType.isEmpty()){
-                    return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.PRODUCT_TYPE_ERROR_NFO));
+            else if(exchangeCode.equalsIgnoreCase("nfo") || exchangeCode.equalsIgnoreCase("nfo")){
+                if(productType.trim().isEmpty() || productType.isEmpty()){
+                    return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.PRODUCT_TYPE_ERROR_NFO_BFO));
                 }
                 else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.PRODUCT_TYPES_HIST))).contains(productType.toLowerCase())) {
-                    return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.PRODUCT_TYPE_ERROR_NFO));
+                    return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.PRODUCT_TYPE_ERROR_NFO_BFO));
                 }
                 else if(productType.equalsIgnoreCase("options")) {
-                    if(strikePrice.isBlank() || strikePrice.isEmpty()){
+                    if(strikePrice.trim().isEmpty() || strikePrice.isEmpty()){
                         return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_STRIKE_PRICE));
                     }
-                    else if(right.isBlank() || right.isEmpty()){
+                    else if(right.trim().isEmpty() || right.isEmpty()){
                         return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_RIGHT_TYPE));
                     }
                     else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.RIGHT_TYPES))).contains(right.toLowerCase())) {
                         return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.RIGHT_TYPE_ERROR));
                     }
                 }
-                else if(expiryDate.isBlank() || expiryDate.isEmpty()){
+                else if(expiryDate.trim().isEmpty() || expiryDate.isEmpty()){
                     return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXPIRY_DATE));
                 }
             }
@@ -274,16 +274,16 @@ public class ApificationBreeze {
             body.put("to_date",toDate);
             body.put("stock_code",stockCode);
             body.put("exchange_code",exchangeCode);
-            if(!(productType.isBlank() || productType.isEmpty())){
+            if(!(productType.trim().isEmpty() || productType.isEmpty())){
                 body.put("product_type",productType);
             }
-            if(!(expiryDate.isBlank() || expiryDate.isEmpty())){
+            if(!(expiryDate.trim().isEmpty() || expiryDate.isEmpty())){
                 body.put("expiry_date",expiryDate);
             }
-            if(!(strikePrice.isBlank() || strikePrice.isEmpty())){
+            if(!(strikePrice.trim().isEmpty() || strikePrice.isEmpty())){
                 body.put("strike_price",strikePrice);
             }
-            if(!(right.isBlank() || right.isEmpty())){
+            if(!(right.trim().isEmpty() || right.isEmpty())){
                 body.put("right",right);
             }
             JSONArray headers = generateHeaders(body);
@@ -300,46 +300,46 @@ public class ApificationBreeze {
 
     public JSONObject getHistoricalDatav2(String interval, String fromDate, String toDate, String stockCode, String exchangeCode, String productType, String expiryDate, String right, String strikePrice) {
         try {
-            if(interval.isBlank() || interval.isEmpty()){
+            if(interval.trim().isEmpty() || interval.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_INTERVAL));
             }
             else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.INTERVAL_TYPES_HIST_V2))).contains(interval.toLowerCase())) {
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.INTERVAL_TYPE_ERROR_HIST_V2));
             }
-            else if(exchangeCode.isBlank() || exchangeCode.isEmpty()){
+            else if(exchangeCode.trim().isEmpty() || exchangeCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
             }
             else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.EXCHANGE_CODES_HIST_V2))).contains(exchangeCode.toLowerCase())) {
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.EXCHANGE_CODE_HIST_V2_ERROR));
             }
-            else if(fromDate.isBlank() || fromDate.isEmpty()){
+            else if(fromDate.trim().isEmpty() || fromDate.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_FROM_DATE));
             }
-            else if(toDate.isBlank() || toDate.isEmpty()){
+            else if(toDate.trim().isEmpty() || toDate.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_TO_DATE));
             }
-            else if(stockCode.isBlank() || stockCode.isEmpty()){
+            else if(stockCode.trim().isEmpty() || stockCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_STOCK_CODE));
             }
-            else if(exchangeCode.equalsIgnoreCase("nfo") || exchangeCode.equalsIgnoreCase("ndx") || exchangeCode.equalsIgnoreCase("mcx")){
-                if(productType.isBlank() || productType.isEmpty()){
+            else if(exchangeCode.equalsIgnoreCase("nfo") || exchangeCode.equalsIgnoreCase("ndx") || exchangeCode.equalsIgnoreCase("mcx") || exchangeCode.equalsIgnoreCase("bfo")){
+                if(productType.trim().isEmpty() || productType.isEmpty()){ 
                     return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_PRODUCT_TYPE_HIST_V2));
                 }
                 else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.PRODUCT_TYPES_HIST_V2))).contains(productType.toLowerCase())) {
                     return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.PRODUCT_TYPE_ERROR_HIST_V2));
                 }
                 else if(productType.equalsIgnoreCase("options")) {
-                    if(strikePrice.isBlank() || strikePrice.isEmpty()){
+                    if(strikePrice.trim().isEmpty() || strikePrice.isEmpty()){
                         return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_STRIKE_PRICE));
                     }
-                    else if(right.isBlank() || right.isEmpty()){
+                    else if(right.trim().isEmpty() || right.isEmpty()){
                         return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_RIGHT_TYPE));
                     }
                     else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.RIGHT_TYPES))).contains(right.toLowerCase())) {
                         return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.RIGHT_TYPE_ERROR));
                     }
                 }
-                else if(expiryDate.isBlank() || expiryDate.isEmpty()){
+                else if(expiryDate.trim().isEmpty() || expiryDate.isEmpty()){
                     return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXPIRY_DATE));
                 }
             }
@@ -350,16 +350,16 @@ public class ApificationBreeze {
             query_params = (query_params+"&to_date="+toDate);
             query_params = (query_params+"&stock_code="+stockCode);
             query_params = (query_params+"&exch_code="+exchangeCode);
-            if(!(productType.isBlank() || productType.isEmpty())){
+            if(!(productType.trim().isEmpty() || productType.isEmpty())){
                 query_params = (query_params+"&product_type="+productType);
             }
-            if(!(expiryDate.isBlank() || expiryDate.isEmpty())){
+            if(!(expiryDate.trim().isEmpty() || expiryDate.isEmpty())){
                 query_params = (query_params+"&expiry_date="+expiryDate);
             }
-            if(!(strikePrice.isBlank() || strikePrice.isEmpty())){
+            if(!(strikePrice.trim().isEmpty() || strikePrice.isEmpty())){
                 query_params = (query_params+"&strike_price="+strikePrice);
             }
-            if(!(right.isBlank() || right.isEmpty())){
+            if(!(right.trim().isEmpty() || right.isEmpty())){
                 query_params = (query_params+"&right="+right);
             }
 
@@ -400,54 +400,54 @@ public class ApificationBreeze {
 
     public JSONObject addMargin(String productType, String stockCode, String exchangeCode, String settlementId, String addAmount, String marginAmount, String openQuantity, String coverQuantity, String categoryIndexPerStock, String expiryDate, String right, String contractTag, String strikePrice, String segmentCode){
         try{
-            if(exchangeCode.isBlank() || exchangeCode.isEmpty()){
+            if(exchangeCode.trim().isEmpty() || exchangeCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
             }
-            else if(!productType.isBlank() && !productType.isEmpty() && !(Arrays.asList(config.typeLists.get(Config.ListEnum.PRODUCT_TYPES)).contains(productType.toLowerCase()))){
+            else if(!productType.trim().isEmpty() && !productType.isEmpty() && !(Arrays.asList(config.typeLists.get(Config.ListEnum.PRODUCT_TYPES)).contains(productType.toLowerCase()))){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.PRODUCT_TYPE_ERROR));
             }
-            else if(!right.isBlank() && !right.isEmpty() && !(Arrays.asList(config.typeLists.get(Config.ListEnum.RIGHT_TYPES))).contains(right.toLowerCase())){
+            else if(!right.trim().isEmpty() && !right.isEmpty() && !(Arrays.asList(config.typeLists.get(Config.ListEnum.RIGHT_TYPES))).contains(right.toLowerCase())){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.RIGHT_TYPE_ERROR));
             }
             JSONObject body = new JSONObject();
             body.put("exchange_code",exchangeCode);
-            if(!productType.isBlank() && !productType.isEmpty()){
+            if(!productType.trim().isEmpty() && !productType.isEmpty()){
                 body.put("product_type",productType);
             }
-            if(!(stockCode.isBlank() && !stockCode.isEmpty())){
+            if(!(stockCode.trim().isEmpty() && !stockCode.isEmpty())){
                 body.put("stock_code",stockCode);
             }
-            if(!(coverQuantity.isBlank() && !coverQuantity.isEmpty())){
+            if(!(coverQuantity.trim().isEmpty() && !coverQuantity.isEmpty())){
                 body.put("cover_quantity",coverQuantity);
             }
-            if(!(categoryIndexPerStock.isBlank() && !categoryIndexPerStock.isEmpty())){
+            if(!(categoryIndexPerStock.trim().isEmpty() && !categoryIndexPerStock.isEmpty())){
                 body.put("category_index_per_stock",categoryIndexPerStock);
             }
-            if(!(contractTag.isBlank() && !contractTag.isEmpty())){
+            if(!(contractTag.trim().isEmpty() && !contractTag.isEmpty())){
                 body.put("contract_tag",contractTag);
             }
-            if(!(marginAmount.isBlank() && !marginAmount.isEmpty())){
+            if(!(marginAmount.trim().isEmpty() && !marginAmount.isEmpty())){
                 body.put("margin_amount",marginAmount);
             }
-            if(!(expiryDate.isBlank() && !expiryDate.isEmpty())){
+            if(!(expiryDate.trim().isEmpty() && !expiryDate.isEmpty())){
                 body.put("expiry_date",expiryDate);
             }
-            if(!(right.isBlank() && !right.isEmpty())){
+            if(!(right.trim().isEmpty() && !right.isEmpty())){
                 body.put("right",right);
             }
-            if(!(strikePrice.isBlank() && !strikePrice.isEmpty())){
+            if(!(strikePrice.trim().isEmpty() && !strikePrice.isEmpty())){
                 body.put("strike_price",strikePrice);
             }
-            if(!(segmentCode.isBlank() && !segmentCode.isEmpty())){
+            if(!(segmentCode.trim().isEmpty() && !segmentCode.isEmpty())){
                 body.put("segment_code",segmentCode);
             }
-            if(!(settlementId.isBlank() && !settlementId.isEmpty())){
+            if(!(settlementId.trim().isEmpty() && !settlementId.isEmpty())){
                 body.put("settlement_id",settlementId);
             }
-            if(!(addAmount.isBlank() && !addAmount.isEmpty())){
+            if(!(addAmount.trim().isEmpty() && !addAmount.isEmpty())){
                 body.put("add_amount",addAmount);
             }
-            if(!(openQuantity.isBlank() && !openQuantity.isEmpty())){
+            if(!(openQuantity.trim().isEmpty() && !openQuantity.isEmpty())){
                 body.put("open_quantity",openQuantity);
             }
             JSONArray headers = generateHeaders(body);
@@ -464,7 +464,7 @@ public class ApificationBreeze {
 
     public JSONObject getMargin(String exchangeCode){
         try{
-            if(exchangeCode.isBlank() || exchangeCode.isEmpty()){
+            if(exchangeCode.trim().isEmpty() || exchangeCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
             }
             JSONObject body = new JSONObject();
@@ -483,40 +483,41 @@ public class ApificationBreeze {
 
     public JSONObject placeOrder(String stockCode, String exchangeCode, String productType, String action, String orderType, String stoploss, String quantity, String price, String validity, String validityDate, String disclosedQuantity, String expiryDate, String right, String strikePrice, String userRemark){
         try{
-            if(stockCode.isBlank() || stockCode.isEmpty()){
+
+            if(stockCode.trim().isEmpty() || stockCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_STOCK_CODE));
             }
-            else if(exchangeCode.isBlank() || exchangeCode.isEmpty()){
+            else if(exchangeCode.trim().isEmpty() || exchangeCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
             }
-            else if(productType.isBlank() || productType.isEmpty()){
+            else if(productType.trim().isEmpty() || productType.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_PRODUCT_TYPE));
             }
             else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.PRODUCT_TYPES))).contains(productType.toLowerCase())){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.PRODUCT_TYPE_ERROR));
             }
-            else if(action.isBlank() || action.isEmpty()){
+            else if(action.trim().isEmpty() || action.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_ACTION));
             }
             else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.ACTION_TYPES))).contains(action.toLowerCase())){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.ACTION_TYPE_ERROR));
             }
-            else if(orderType.isBlank() || orderType.isEmpty()){
+            else if(orderType.trim().isEmpty() || orderType.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_ORDER_TYPE));
             }
-            else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.ORDER_TYPES))).contains(orderType.toLowerCase())){
-                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.ORDER_TYPE_ERROR));
-            }
-            else if(quantity.isBlank() || quantity.isEmpty()){
+//            else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.ORDER_TYPES))).contains(orderType.toLowerCase())){
+//                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.ORDER_TYPE_ERROR));
+//            }
+            else if(quantity.trim().isEmpty() || quantity.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_QUANTITY));
             }
-            else if(validity.isBlank() || validity.isEmpty()){
+            else if(validity.trim().isEmpty() || validity.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_VALIDITY));
             }
             else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.VALIDITY_TYPES))).contains(validity.toLowerCase())){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.VALIDITY_TYPE_ERROR));
             }
-            else if(!(right.isBlank() || right.isEmpty()) && (!(Arrays.asList(config.typeLists.get(Config.ListEnum.RIGHT_TYPES))).contains(right.toLowerCase()))){
+            else if(!(right.trim().isEmpty() || right.isEmpty()) && (!(Arrays.asList(config.typeLists.get(Config.ListEnum.RIGHT_TYPES))).contains(right.toLowerCase()))){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.RIGHT_TYPE_ERROR));
             }
             JSONObject body = new JSONObject();
@@ -529,25 +530,25 @@ public class ApificationBreeze {
             body.put("price",price);
             body.put("validity",validity);
 
-            if(!(stoploss.isBlank() && stoploss.isEmpty())){
+            if(!(stoploss.trim().isEmpty() && stoploss.isEmpty())){
                 body.put("stoploss",stoploss);
             }
-            if(!(validityDate.isBlank() && validityDate.isEmpty())){
+            if(!(validityDate.trim().isEmpty() && validityDate.isEmpty())){
                 body.put("validity_date",validityDate);
             }
-            if(!(disclosedQuantity.isBlank() && disclosedQuantity.isEmpty())){
+            if(!(disclosedQuantity.trim().isEmpty() && disclosedQuantity.isEmpty())){
                 body.put("disclosed_quantity",disclosedQuantity);
             }
-            if(!(expiryDate.isBlank() && expiryDate.isEmpty())){
+            if(!(expiryDate.trim().isEmpty() && expiryDate.isEmpty())){
                 body.put("expiry_date",expiryDate);
             }
-            if(!(right.isBlank() && right.isEmpty())){
+            if(!(right.trim().isEmpty() && right.isEmpty())){
                 body.put("right",right);
             }
-            if(!(strikePrice.isBlank() && strikePrice.isEmpty())){
+            if(!(strikePrice.trim().isEmpty() && strikePrice.isEmpty())){
                 body.put("strike_price",strikePrice);
             }
-            if(!(userRemark.isBlank() && userRemark.isEmpty())){
+            if(!(userRemark.trim().isEmpty() && userRemark.isEmpty())){
                 body.put("user_remark",userRemark);
             }
             JSONArray headers = generateHeaders(body);
@@ -564,10 +565,10 @@ public class ApificationBreeze {
 
     public JSONObject getOrderDetail(String exchangeCode, String orderId){
         try{
-            if(exchangeCode.isBlank() || exchangeCode.isEmpty()){
+            if(exchangeCode.trim().isEmpty() || exchangeCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
             }
-            else if(orderId.isBlank() || orderId.isEmpty()){
+            else if(orderId.trim().isEmpty() || orderId.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_ORDER_ID));
             }
             JSONObject body = new JSONObject();
@@ -587,13 +588,13 @@ public class ApificationBreeze {
 
     public JSONObject getOrderList(String exchangeCode, String fromDate, String toDate){
         try{
-            if(exchangeCode.isBlank() || exchangeCode.isEmpty()){
+            if(exchangeCode.trim().isEmpty() || exchangeCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
             }
-            else if(fromDate.isBlank() || fromDate.isEmpty()){
+            else if(fromDate.trim().isEmpty() || fromDate.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_FROM_DATE));
             }
-            else if(toDate.isBlank() || toDate.isEmpty()){
+            else if(toDate.trim().isEmpty() || toDate.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_TO_DATE));
             }
             JSONObject body = new JSONObject();
@@ -614,10 +615,10 @@ public class ApificationBreeze {
 
     public JSONObject cancelOrder(String exchangeCode, String orderId){
         try{
-            if(exchangeCode.isBlank() || exchangeCode.isEmpty()){
+            if(exchangeCode.trim().isEmpty() || exchangeCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
             }
-            else if(orderId.isBlank() || orderId.isEmpty()){
+            else if(orderId.trim().isEmpty() || orderId.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_ORDER_ID));
             }
             JSONObject body = new JSONObject();
@@ -637,40 +638,40 @@ public class ApificationBreeze {
 
     public JSONObject modifyOrder(String orderId, String exchangeCode, String orderType, String stoploss, String quantity, String price, String validity, String disclosedQuantity, String validityDate){
         try{
-            if(exchangeCode.isBlank() || exchangeCode.isEmpty()){
+            if(exchangeCode.trim().isEmpty() || exchangeCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
             }
-            else if(orderId.isBlank() || orderId.isEmpty()){
+            else if(orderId.trim().isEmpty() || orderId.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_ORDER_ID));
             }
-            else if(!(orderType.isBlank() || orderType.isEmpty()) && (!(Arrays.asList(config.typeLists.get(Config.ListEnum.ORDER_TYPES))).contains(orderType.toLowerCase()))){
+            else if(!(orderType.trim().isEmpty() || orderType.isEmpty()) && (!(Arrays.asList(config.typeLists.get(Config.ListEnum.ORDER_TYPES))).contains(orderType.toLowerCase()))){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.ORDER_TYPE_ERROR));
             }
-            else if(!(validity.isBlank() || validity.isEmpty()) && (!(Arrays.asList(config.typeLists.get(Config.ListEnum.VALIDITY_TYPES))).contains(validity.toLowerCase()))){
+            else if(!(validity.trim().isEmpty() || validity.isEmpty()) && (!(Arrays.asList(config.typeLists.get(Config.ListEnum.VALIDITY_TYPES))).contains(validity.toLowerCase()))){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.VALIDITY_TYPE_ERROR));
             }
             JSONObject body = new JSONObject();
             body.put("order_id",orderId);
             body.put("exchange_code",exchangeCode);
-            if(!(orderType.isBlank() || orderType.isEmpty())){
+            if(!(orderType.trim().isEmpty() || orderType.isEmpty())){
                 body.put("order_type",orderType);
             }
-            if(!(stoploss.isBlank() || stoploss.isEmpty())){
+            if(!(stoploss.trim().isEmpty() || stoploss.isEmpty())){
                 body.put("stoploss",stoploss);
             }
-            if(!(quantity.isBlank() || quantity.isEmpty())){
+            if(!(quantity.trim().isEmpty() || quantity.isEmpty())){
                 body.put("quantity",quantity);
             }
-            if(!(price.isBlank() || price.isEmpty())){
+            if(!(price.trim().isEmpty() || price.isEmpty())){
                 body.put("price",price);
             }
-            if(!(validity.isBlank() || validity.isEmpty())){
+            if(!(validity.trim().isEmpty() || validity.isEmpty())){
                 body.put("validity",validity);
             }
-            if(!(disclosedQuantity.isBlank() || disclosedQuantity.isEmpty())){
+            if(!(disclosedQuantity.trim().isEmpty() || disclosedQuantity.isEmpty())){
                 body.put("disclosed_quantity",disclosedQuantity);
             }
-            if(!(validityDate.isBlank() || validityDate.isEmpty())){
+            if(!(validityDate.trim().isEmpty() || validityDate.isEmpty())){
                 body.put("validity_date",validityDate);
             }
             JSONArray headers = generateHeaders(body);
@@ -687,21 +688,21 @@ public class ApificationBreeze {
 
     public JSONObject getPortfolioHoldings(String exchangeCode, String fromDate, String toDate, String stockCode, String portfolioType){
         try{
-            if(exchangeCode.isBlank() || exchangeCode.isEmpty()){
+            if(exchangeCode.trim().isEmpty() || exchangeCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
             }
             JSONObject body = new JSONObject();
             body.put("exchange_code",exchangeCode);
-            if(!(fromDate.isBlank() || fromDate.isEmpty())){
+            if(!(fromDate.trim().isEmpty() || fromDate.isEmpty())){
                 body.put("from_date",fromDate);
             }
-            if(!(toDate.isBlank() || toDate.isEmpty())){
+            if(!(toDate.trim().isEmpty() || toDate.isEmpty())){
                 body.put("to_date",toDate);
             }
-            if(!(stockCode.isBlank() || stockCode.isEmpty())){
+            if(!(stockCode.trim().isEmpty() || stockCode.isEmpty())){
                 body.put("stock_code",stockCode);
             }
-            if(!(portfolioType.isBlank() || portfolioType.isEmpty())){
+            if(!(portfolioType.trim().isEmpty() || portfolioType.isEmpty())){
                 body.put("portfolio_type",portfolioType);
             }
             JSONArray headers = generateHeaders(body);
@@ -721,9 +722,9 @@ public class ApificationBreeze {
             JSONObject body = new JSONObject();
             JSONArray headers = generateHeaders(body);
             String response = makeRequest(
-                config.apiMethods.get(Config.APIMethodEnum.GET),
-                config.endPoints.get(Config.EndPointEnum.PORTFOLIO_POSITION),
-                body, headers
+                    config.apiMethods.get(Config.APIMethodEnum.GET),
+                    config.endPoints.get(Config.EndPointEnum.PORTFOLIO_POSITION),
+                    body, headers
             );
             return new JSONObject(response);
         } catch (JSONException e) {
@@ -734,31 +735,31 @@ public class ApificationBreeze {
 
     public JSONObject getQuotes(String stockCode, String exchangeCode, String expiryDate, String productType, String right, String strikePrice){
         try{
-            if(exchangeCode.isBlank() || exchangeCode.isEmpty()){
+            if(exchangeCode.trim().isEmpty() || exchangeCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
             }
-            else if(stockCode.isBlank() || stockCode.isEmpty()){
+            else if(stockCode.trim().isEmpty() || stockCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_STOCK_CODE));
             }
-            else if(!(productType.isBlank() || productType.isEmpty()) && !(Arrays.asList(config.typeLists.get(Config.ListEnum.PRODUCT_TYPES))).contains(productType.toLowerCase())){
+            else if(!(productType.trim().isEmpty() || productType.isEmpty()) && !(Arrays.asList(config.typeLists.get(Config.ListEnum.PRODUCT_TYPES))).contains(productType.toLowerCase())){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.PRODUCT_TYPE_ERROR));
             }
-            else if(!(right.isBlank() || right.isEmpty()) && !(Arrays.asList(config.typeLists.get(Config.ListEnum.RIGHT_TYPES))).contains(right.toLowerCase())){
+            else if(!(right.trim().isEmpty() || right.isEmpty()) && !(Arrays.asList(config.typeLists.get(Config.ListEnum.RIGHT_TYPES))).contains(right.toLowerCase())){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.RIGHT_TYPE_ERROR));
             }
             JSONObject body = new JSONObject();
             body.put("stock_code",stockCode);
             body.put("exchange_code",exchangeCode);
-            if(!(expiryDate.isBlank() || expiryDate.isEmpty())){
+            if(!(expiryDate.trim().isEmpty() || expiryDate.isEmpty())){
                 body.put("expiry_date",expiryDate);
             }
-            if(!(productType.isBlank() || productType.isEmpty())){
+            if(!(productType.trim().isEmpty() || productType.isEmpty())){
                 body.put("product_type",productType);
             }
-            if(!(right.isBlank() || right.isEmpty())){
+            if(!(right.trim().isEmpty() || right.isEmpty())){
                 body.put("right",right);
             }
-            if(!(strikePrice.isBlank() || strikePrice.isEmpty())){
+            if(!(strikePrice.trim().isEmpty() || strikePrice.isEmpty())){
                 body.put("strike_price",strikePrice);
             }
             JSONArray headers = generateHeaders(body);
@@ -778,45 +779,45 @@ public class ApificationBreeze {
     {
         try
         {
-            if(productType==null || productType.isEmpty() || productType.isBlank()){
+            if(productType==null || productType.isEmpty() || productType.trim().isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_PRODUCT_TYPE_NFO));
             }
-            else if(exchangeCode.isBlank() || exchangeCode.isEmpty()){
+            else if(exchangeCode.trim().isEmpty() || exchangeCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
             }
-            else if(stoplossTrigger.isBlank() || stoplossTrigger.isEmpty()){
+            else if(stoplossTrigger.trim().isEmpty() || stoplossTrigger.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_STOP_LOSS_TRIGGER));
             }
-            else if(optionType.isBlank() || optionType.isEmpty())
+            else if(optionType.trim().isEmpty() || optionType.isEmpty())
             {
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_OPTION_TYPE));
             }
-            else if(strikePrice.isBlank() || strikePrice.isEmpty()){
+            else if(strikePrice.trim().isEmpty() || strikePrice.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_STRIKE_PRICE));
             }
-                JSONObject body = new JSONObject();
-                body.put("strike_price",strikePrice);                                    
-                body.put("product_type",productType);                 
-                body.put("expiry_date",expiryDate);
-                body.put("underlying",underlying);
-                body.put("exchange_code",exchangeCode);
-                body.put("order_flow",orderFlow);
-                body.put("stop_loss_trigger",stoplossTrigger);
-                body.put("option_type",optionType);
-                body.put("source_flag",sourceFlag)
-                body.put("limit_rate",limitRate);
-                body.put("order_reference",orderReference);
-                body.put("available_quantity",availableQuantity);
-                body.put("market_type", marketType);
-                body.put("fresh_order_limit",freshOrderLimit);
+            JSONObject body = new JSONObject();
+            body.put("strike_price",strikePrice);
+            body.put("product_type",productType);
+            body.put("expiry_date",expiryDate);
+            body.put("underlying",underlying);
+            body.put("exchange_code",exchangeCode);
+            body.put("order_flow",orderFlow);
+            body.put("stop_loss_trigger",stoplossTrigger);
+            body.put("option_type",optionType);
+            body.put("source_flag",sourceFlag);
+            body.put("limit_rate",limitRate);
+            body.put("order_reference",orderReference);
+            body.put("available_quantity",availableQuantity);
+            body.put("market_type", marketType);
+            body.put("fresh_order_limit",freshOrderLimit);
 
             JSONArray headers = generateHeaders(body);
-                String response = makeRequest(
+            String response = makeRequest(
                     config.apiMethods.get(Config.APIMethodEnum.POST),
                     config.endPoints.get(Config.EndPointEnum.LIMIT_CALCULATOR),
                     body, headers
-                );
-                return new JSONObject(response);
+            );
+            return new JSONObject(response);
         }
         catch(JSONException e)
         {
@@ -825,11 +826,11 @@ public class ApificationBreeze {
     }
 
     public JSONObject getOptionChainQuotes(String stockCode, String exchangeCode, String expiryDate, String productType, String right, String strikePrice){
-      try{
-            if(exchangeCode==null || exchangeCode.isBlank() || exchangeCode.isEmpty() || !exchangeCode.equalsIgnoreCase("nfo")){
+        try{
+            if(exchangeCode==null || exchangeCode.trim().isEmpty() || exchangeCode.isEmpty() || !exchangeCode.equalsIgnoreCase("nfo") || !exchangeCode.equalsIgnoreCase("bfo")){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.OPT_CHAIN_EXCH_CODE_ERROR));
             }
-            else if(productType==null || productType.isEmpty() || productType.isBlank()){
+            else if(productType==null || productType.isEmpty() || productType.trim().isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_PRODUCT_TYPE_NFO));
             }
             else if(!productType.toLowerCase().equals("futures") && !productType.toLowerCase().equals("options")){
@@ -864,16 +865,16 @@ public class ApificationBreeze {
             JSONObject body = new JSONObject();
             body.put("stock_code",stockCode);
             body.put("exchange_code",exchangeCode);
-            if(!(expiryDate.isBlank() || expiryDate.isEmpty())){
+            if(!(expiryDate.trim().isEmpty() || expiryDate.isEmpty())){
                 body.put("expiry_date",expiryDate);
             }
-            if(!(productType.isBlank() || productType.isEmpty())){
+            if(!(productType.trim().isEmpty() || productType.isEmpty())){
                 body.put("product_type",productType);
             }
-            if(!(right.isBlank() || right.isEmpty())){
+            if(!(right.trim().isEmpty() || right.isEmpty())){
                 body.put("right",right);
             }
-            if(!(strikePrice.isBlank() || strikePrice.isEmpty())){
+            if(!(strikePrice.trim().isEmpty() || strikePrice.isEmpty())){
                 body.put("strike_price",strikePrice);
             }
             JSONArray headers = generateHeaders(body);
@@ -891,28 +892,28 @@ public class ApificationBreeze {
     public JSONObject squareOff(String sourceFlag, String stockCode, String exchangeCode, String quantity, String price, String action, String orderType, String validity, String stoploss, String disclosedQuantity, String protectionPercentage, String settlementId, String marginAmount, String openQuantity, String coverQuantity, String productType, String expiryDate, String right, String strikePrice, String validityDate, String tradePassword, String aliasName){
         try{
             JSONObject body = new JSONObject();
-            body.put("source_flag", (sourceFlag.isEmpty() || sourceFlag.isBlank()) ? "" : sourceFlag);
-            body.put("stock_code", (stockCode.isEmpty() || stockCode.isBlank()) ? "" : stockCode);
-            body.put("exchange_code", (exchangeCode.isEmpty() || exchangeCode.isBlank()) ? "" : exchangeCode);
-            body.put("quantity", (quantity.isEmpty() || quantity.isBlank()) ? "" : quantity);
-            body.put("price", (price.isEmpty() || price.isBlank()) ? "" : price);
-            body.put("action", (action.isEmpty() || action.isBlank()) ? "" : action);
-            body.put("order_type", (orderType.isEmpty() || orderType.isBlank()) ? "" : orderType);
-            body.put("validity", (validity.isEmpty() || validity.isBlank()) ? "" : validity);
-            body.put("stoploss_price", (stoploss.isEmpty() || stoploss.isBlank()) ? "" : stoploss);
-            body.put("disclosed_quantity", (disclosedQuantity.isEmpty() || disclosedQuantity.isBlank()) ? "" : disclosedQuantity);
-            body.put("protection_percentage", (protectionPercentage.isEmpty() || protectionPercentage.isBlank()) ? "" : protectionPercentage);
-            body.put("settlement_id", (settlementId.isEmpty() || settlementId.isBlank()) ? "" : settlementId);
-            body.put("margin_amount", (marginAmount.isEmpty() || marginAmount.isBlank()) ? "" : marginAmount);
-            body.put("open_quantity", (openQuantity.isEmpty() || openQuantity.isBlank()) ? "" : openQuantity);
-            body.put("cover_quantity", (coverQuantity.isEmpty() || coverQuantity.isBlank()) ? "" : coverQuantity);
-            body.put("product_type", (productType.isEmpty() || productType.isBlank()) ? "" : productType);
-            body.put("expiry_date", (expiryDate.isEmpty() || expiryDate.isBlank()) ? "" : expiryDate);
-            body.put("right", (right.isEmpty() || right.isBlank()) ? "" : right);
-            body.put("strike_price", (strikePrice.isEmpty() || strikePrice.isBlank()) ? "" : strikePrice);
-            body.put("validity_date", (validityDate.isEmpty() || validityDate.isBlank()) ? "" : validityDate);
-            body.put("alias_name", (aliasName.isEmpty() || aliasName.isBlank()) ? "" : aliasName);
-            body.put("trade_password", (tradePassword.isEmpty() || tradePassword.isBlank()) ? "" : tradePassword);
+            body.put("source_flag", (sourceFlag.isEmpty() || sourceFlag.trim().isEmpty()) ? "" : sourceFlag);
+            body.put("stock_code", (stockCode.isEmpty() || stockCode.trim().isEmpty()) ? "" : stockCode);
+            body.put("exchange_code", (exchangeCode.isEmpty() || exchangeCode.trim().isEmpty()) ? "" : exchangeCode);
+            body.put("quantity", (quantity.isEmpty() || quantity.trim().isEmpty()) ? "" : quantity);
+            body.put("price", (price.isEmpty() || price.trim().isEmpty()) ? "" : price);
+            body.put("action", (action.isEmpty() || action.trim().isEmpty()) ? "" : action);
+            body.put("order_type", (orderType.isEmpty() || orderType.trim().isEmpty()) ? "" : orderType);
+            body.put("validity", (validity.isEmpty() || validity.trim().isEmpty()) ? "" : validity);
+            body.put("stoploss_price", (stoploss.isEmpty() || stoploss.trim().isEmpty()) ? "" : stoploss);
+            body.put("disclosed_quantity", (disclosedQuantity.isEmpty() || disclosedQuantity.trim().isEmpty()) ? "" : disclosedQuantity);
+            body.put("protection_percentage", (protectionPercentage.isEmpty() || protectionPercentage.trim().isEmpty()) ? "" : protectionPercentage);
+            body.put("settlement_id", (settlementId.isEmpty() || settlementId.trim().isEmpty()) ? "" : settlementId);
+            body.put("margin_amount", (marginAmount.isEmpty() || marginAmount.trim().isEmpty()) ? "" : marginAmount);
+            body.put("open_quantity", (openQuantity.isEmpty() || openQuantity.trim().isEmpty()) ? "" : openQuantity);
+            body.put("cover_quantity", (coverQuantity.isEmpty() || coverQuantity.trim().isEmpty()) ? "" : coverQuantity);
+            body.put("product_type", (productType.isEmpty() || productType.trim().isEmpty()) ? "" : productType);
+            body.put("expiry_date", (expiryDate.isEmpty() || expiryDate.trim().isEmpty()) ? "" : expiryDate);
+            body.put("right", (right.isEmpty() || right.trim().isEmpty()) ? "" : right);
+            body.put("strike_price", (strikePrice.isEmpty() || strikePrice.trim().isEmpty()) ? "" : strikePrice);
+            body.put("validity_date", (validityDate.isEmpty() || validityDate.trim().isEmpty()) ? "" : validityDate);
+            body.put("alias_name", (aliasName.isEmpty() || aliasName.trim().isEmpty()) ? "" : aliasName);
+            body.put("trade_password", (tradePassword.isEmpty() || tradePassword.trim().isEmpty()) ? "" : tradePassword);
             JSONArray headers = generateHeaders(body);
             String response = makeRequest(
                     config.apiMethods.get(Config.APIMethodEnum.POST),
@@ -928,31 +929,31 @@ public class ApificationBreeze {
     public JSONObject getTradeList(String fromDate, String toDate, String exchangeCode, String productType, String action, String stockCode){
         try{
             JSONObject body = new JSONObject();
-            if(exchangeCode.isBlank() || exchangeCode.isEmpty()){
+            if(exchangeCode.trim().isEmpty() || exchangeCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
             }
-            else if(!(productType.isBlank() || productType.isEmpty()) && !(Arrays.asList(config.typeLists.get(Config.ListEnum.PRODUCT_TYPES))).contains(productType.toLowerCase())){
+            else if(!(productType.trim().isEmpty() || productType.isEmpty()) && !(Arrays.asList(config.typeLists.get(Config.ListEnum.PRODUCT_TYPES))).contains(productType.toLowerCase())){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.PRODUCT_TYPE_ERROR));
             }
-            else if(!(action.isBlank() || action.isEmpty()) && !(Arrays.asList(config.typeLists.get(Config.ListEnum.ACTION_TYPES))).contains(action.toLowerCase())){
+            else if(!(action.trim().isEmpty() || action.isEmpty()) && !(Arrays.asList(config.typeLists.get(Config.ListEnum.ACTION_TYPES))).contains(action.toLowerCase())){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.ACTION_TYPE_ERROR));
             }
 
             body.put("exchange_code", exchangeCode);
-            if(!(fromDate.isBlank() || fromDate.isEmpty())){
+            if(!(fromDate.trim().isEmpty() || fromDate.isEmpty())){
                 body.put("from_date",fromDate);
             }
-            if(!(toDate.isBlank() || toDate.isEmpty())){
+            if(!(toDate.trim().isEmpty() || toDate.isEmpty())){
                 body.put("to_date",toDate);
             }
-            if(!(productType.isBlank() || productType.isEmpty())){
+            if(!(productType.trim().isEmpty() || productType.isEmpty())){
                 body.put("product_type",productType);
                 body.put("product_type",productType);
             }
-            if(!(action.isBlank() || action.isEmpty())){
+            if(!(action.trim().isEmpty() || action.isEmpty())){
                 body.put("action",action);
             }
-            if(!(stockCode.isBlank() || stockCode.isEmpty())){
+            if(!(stockCode.trim().isEmpty() || stockCode.isEmpty())){
                 body.put("stock_code",stockCode);
             }
             JSONArray headers = generateHeaders(body);
@@ -970,10 +971,10 @@ public class ApificationBreeze {
     public JSONObject getTradeDetail(String exchangeCode, String orderId){
         try{
             JSONObject body = new JSONObject();
-            if(exchangeCode.isBlank() || exchangeCode.isEmpty()){
+            if(exchangeCode.trim().isEmpty() || exchangeCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
             }
-            else if(orderId.isBlank() || orderId.isEmpty()){
+            else if(orderId.trim().isEmpty() || orderId.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_ORDER_ID));
             }
             JSONArray headers = generateHeaders(body);
@@ -994,8 +995,8 @@ public class ApificationBreeze {
     {
         try
         {
-            
-            if(exchangeCode.isBlank() || exchangeCode.isEmpty()){
+
+            if(exchangeCode.trim().isEmpty() || exchangeCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
             }
 
@@ -1004,25 +1005,25 @@ public class ApificationBreeze {
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_EXCHANGE_CODE));
             }
 
-            else if(action.isBlank() || action.isEmpty())
+            else if(action.trim().isEmpty() || action.isEmpty())
             {
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_ACTION));
             }
 
-            else if(productType.isBlank() || productType.isEmpty())
+            else if(productType.trim().isEmpty() || productType.isEmpty())
             {
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_PRODUCT_TYPE));
             }
 
-            else if(orderType.isBlank() || orderType.isEmpty())
+            else if(orderType.trim().isEmpty() || orderType.isEmpty())
             {
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_ORDER_TYPE));
             }
 
-            //else if(right.isBlank() || right.isEmpty())
+            //else if(right.trim().isEmpty() || right.isEmpty())
             //{
             //    return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_RIGHT_TYPE));
-            //} 
+            //}
 
             JSONObject body = new JSONObject();
 
@@ -1053,7 +1054,7 @@ public class ApificationBreeze {
         catch(JSONException e)
         {
             throw new RuntimeException(e);
-        }   
+        }
     }
 
     public JSONObject getNames(String exchange, String stockcode) throws Exception
@@ -1150,8 +1151,5 @@ public class ApificationBreeze {
         }
     }
 
-
-
-
-
 }
+
