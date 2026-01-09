@@ -1,4 +1,9 @@
 package com.breeze.breezeconnect;
+//import com.opencsv.CSVReader;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -7,22 +12,33 @@ import io.socket.emitter.Emitter.Listener;
 import io.socket.engineio.client.transports.WebSocket;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
+import java.io.ByteArrayOutputStream;
+import java.io.StringReader;
+import java.io.BufferedReader;
 
-import java.awt.*;
-import java.io.IOException;
+
+
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import java.net.URL;
+import java.net.HttpURLConnection;
+
+import java.io.BufferedInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipEntry;
+
+
 
 public class BreezeConnect extends ApificationBreeze {
 
@@ -59,83 +75,300 @@ public class BreezeConnect extends ApificationBreeze {
         return new JSONObject().put("message", message);
     }
 
-    public void getStockScriptList(){
-        for(int i=0;i<6;i++){
-            JSONObject stockScript = new JSONObject();
-            this.stockScriptDictList.add(stockScript);
+    private String getContractName(String underlying, String productType, String expiryDate,
+                                   String strikePrice, String optionType) {
+        // Mirror Python: strip quotes and normalize
+        if (productType == null) productType = "";
+        if (underlying == null) underlying = "";
+        if (expiryDate == null) expiryDate = "";
+        if (strikePrice == null) strikePrice = "";
+        if (optionType == null) optionType = "";
+
+        productType = productType.replace("\"", "").toUpperCase();
+        underlying = underlying.replace("\"", "");
+        expiryDate = expiryDate.replace("\"", "");
+        strikePrice = strikePrice.replace("\"", "");
+        optionType = optionType.replace("\"", "").toUpperCase();
+
+        String contractName;
+        if (productType.contains("FUT")) {
+            // FUT-<underlying>-<expiryDate>
+            contractName = String.format("FUT-%s-%s", underlying, expiryDate);
+        } else {
+            // OPT-<underlying>-<expiryDate>-<strikePrice>-<CE|PE>
+            String opt = optionType.contains("C") ? "CE" : "PE";
+            contractName = String.format("OPT-%s-%s-%s-%s", underlying, expiryDate, strikePrice, opt);
         }
-        for(int i=0;i<6;i++){
-            JSONObject tokenScript = new JSONObject();
-            this.tokenScriptDictList.add(tokenScript);
+        return contractName;
+    }
+
+    private String[] splitCsvLine(String line) {
+        List<String> list = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        boolean insideQuotes = false;
+
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+
+            if (c == '\"') {
+                insideQuotes = !insideQuotes;
+            } else if (c == ',' && !insideQuotes) {
+                list.add(sb.toString());
+                sb.setLength(0);
+            } else {
+                sb.append(c);
+            }
         }
-        try{
-            int CONNECTION_TIMEOUT_MS = 10000; // Timeout in millis.
-            CloseableHttpClient client = HttpClients.createDefault();
-            HttpEntityEnclosingRequestBase http = new HttpGetWithEntity();
-            http.setConfig(RequestConfig.custom()
-                    .setConnectionRequestTimeout(CONNECTION_TIMEOUT_MS)
-                    .setConnectTimeout(CONNECTION_TIMEOUT_MS)
-                    .setSocketTimeout(CONNECTION_TIMEOUT_MS)
-                    .build());
-            http.setURI(URI.create(config.urls.get(Config.UrlEnum.STOCK_SCRIPT_CSV_URL)));
-            String responseString = "";
-            try {
-                CloseableHttpResponse response = client.execute(http);
-                HttpEntity responseEntity = response.getEntity();
-                responseString = EntityUtils.toString(responseEntity, "UTF-8");
-                String [] stockDataList = responseString.split("\n");
-                for(String rowString:stockDataList){
-                    String [] row = rowString.split(",");
-                    if(row[2].equals("BSE")){
-                        this.stockScriptDictList.get(0).put(row[3],row[5]);
-                        JSONArray values = new JSONArray();
-                        values.put(row[3]);
-                        values.put(row[1]);
-                        this.tokenScriptDictList.get(0).put(row[5],values);
+
+        list.add(sb.toString());
+        return list.toArray(new String[0]);
+    }
+
+    public void getStockScriptList() {
+        // reset containers to ensure indexes 0..5 exist
+        for (int i = 0; i < 6; i++) {
+            if (i < this.stockScriptDictList.size()) this.stockScriptDictList.set(i, new JSONObject());
+            else this.stockScriptDictList.add(new JSONObject());
+            if (i < this.tokenScriptDictList.size()) this.tokenScriptDictList.set(i, new JSONObject());
+            else this.tokenScriptDictList.add(new JSONObject());
+        }
+        HttpURLConnection conn = null;
+        try {
+            String zipUrl = null;
+            // prefer SECURITY_MASTER_URL if available, otherwise fall back to STOCK_SCRIPT_CSV_URL
+            try { zipUrl = config.urls.get(Config.UrlEnum.SECURITY_MASTER_URL); } catch (Exception ignored) {}
+            if (zipUrl == null || zipUrl.isEmpty()) {
+                zipUrl = config.urls.get(Config.UrlEnum.STOCK_SCRIPT_CSV_URL);
+            }
+
+            URL url = new URL(zipUrl);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(15_000);
+            conn.setReadTimeout(30_000);
+            conn.setRequestMethod("GET");
+
+            try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(conn.getInputStream()), StandardCharsets.UTF_8)) {
+                ZipEntry entry;
+                while ((entry = zis.getNextEntry()) != null) {
+                    String entryName = entry.getName();
+                    if (entry.isDirectory()) {
+                        zis.closeEntry();
+                        continue;
                     }
-                    else if(row[2].equals("NSE")){
-                        this.stockScriptDictList.get(1).put(row[3],row[5]);
-                        JSONArray values = new JSONArray();
-                        values.put(row[3]);
-                        values.put(row[1]);
-                        this.tokenScriptDictList.get(1).put(row[5],values);
+
+                    String lower = entryName.toLowerCase();
+                    if (!lower.endsWith(".txt") && !lower.endsWith(".csv")) {
+                        zis.closeEntry();
+                        continue;
                     }
-                    else if(row[2].equals("NDX")){
-                        this.stockScriptDictList.get(2).put(row[7],row[5]);
-                        JSONArray values = new JSONArray();
-                        values.put(row[7]);
-                        values.put(row[1]);
-                        this.tokenScriptDictList.get(2).put(row[5],values);
+
+                    String upperName = entryName.toUpperCase();
+                    String exchangeCode = null;
+                    int idx = -1;
+                    if (upperName.contains("FONSE")) { exchangeCode = "NFO"; idx = 4; }
+                    else if (upperName.contains("FOBSE")) { exchangeCode = "BFO"; idx = 5; }
+                    else if (upperName.contains("MCX")) { exchangeCode = "MCX"; idx = 3; }
+                    else if (upperName.contains("NDX")) { exchangeCode = "NDX"; idx = 2; }
+                    else if (upperName.contains("NSE")) { exchangeCode = "NSE"; idx = 1; }
+                    else if (upperName.contains("BSE")) { exchangeCode = "BSE"; idx = 0; }
+                    else {
+                        zis.closeEntry();
+                        continue;
                     }
-                    else if(row[2].equals("MCX")){
-                        this.stockScriptDictList.get(3).put(row[7],row[5]);
-                        JSONArray values = new JSONArray();
-                        values.put(row[3]);
-                        values.put(row[1]);
-                        this.tokenScriptDictList.get(3).put(row[5],values);
+                    // Read the entire zip entry into memory (byte array)
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    byte[] buf = new byte[4096];
+                    int n;
+                    while ((n = zis.read(buf)) != -1) {
+                        baos.write(buf, 0, n);
                     }
-                    else if(row[2].equals("NFO")){
-                        this.stockScriptDictList.get(4).put(row[7],row[5]);
-                        JSONArray values = new JSONArray();
-                        values.put(row[3]);
-                        values.put(row[1]);
-                        this.tokenScriptDictList.get(4).put(row[5],values);
+                    byte[] entryBytes = baos.toByteArray();
+
+                    if (entryBytes.length == 0) {
+                        zis.closeEntry();
+                        continue;
                     }
-                    else if(row[2].equals("BFO")){
-                        this.stockScriptDictList.get(5).put(row[7],row[5]);
-                        JSONArray values = new JSONArray();
-                        values.put(row[3]);
-                        values.put(row[1]);
-                        this.tokenScriptDictList.get(5).put(row[5],values);
-                    }
+
+                    String entryText = new String(entryBytes, StandardCharsets.UTF_8);
+
+                    // parse entryText line-by-line (with robust checks per exchange)
+                    try (BufferedReader br2 = new BufferedReader(new java.io.StringReader(entryText))) {
+                        String line;
+                        int lineNo = 0;
+                        while ((line = br2.readLine()) != null) {
+                            lineNo++;
+                            if (line == null || line.trim().isEmpty()) continue;
+
+                            String[] cols = splitCsvLine(line);
+                            if (cols.length < 2) {
+                                // too short even for BSE/NSE -> skip
+                                System.err.printf("Skipping very short row (len=%d) in %s line %d%n", cols.length, entryName, lineNo);
+                                continue;
+                            }
+
+                            try {
+                                if ("NFO".equals(exchangeCode) || "BFO".equals(exchangeCode)) {
+                                    // need at least cols[0..6]
+                                    if (cols.length <= 6) {
+                                        System.err.printf("Skipping NFO/BFO row (needs >6 cols, got %d) in %s line %d%n", cols.length, entryName, lineNo);
+                                        continue;
+                                    }
+                                    String token = cols[0].replace("\"", "").trim();
+                                    String contractName = getContractName(cols[2], cols[3], cols[4], cols[5], cols[6]);
+                                    String companyName = cols.length > 29 ? cols[29].replace("\"", "").trim() : "";
+                                    this.stockScriptDictList.get(idx).put(contractName, token);
+                                    JSONArray v = new JSONArray();
+                                    v.put(contractName);
+                                    v.put(companyName);
+                                    this.tokenScriptDictList.get(idx).put(token, v);
+
+                                } else if ("MCX".equals(exchangeCode)) {
+                                    // need at least cols[0..9]
+                                    if (cols.length <= 9) {
+                                        System.err.printf("Skipping MCX row (needs >9 cols, got %d) in %s line %d%n", cols.length, entryName, lineNo);
+                                        continue;
+                                    }
+                                    String token = cols[0].replace("\"", "").trim();
+                                    String contractName = getContractName(cols[2], cols[3], cols[7], cols[9], cols[8]);
+                                    String companyName = cols.length > 4 ? cols[4].replace("\"", "").trim() : "";
+                                    this.stockScriptDictList.get(idx).put(contractName, token);
+                                    JSONArray v = new JSONArray();
+                                    v.put(contractName);
+                                    v.put(companyName);
+                                    this.tokenScriptDictList.get(idx).put(token, v);
+
+                                } else if ("NDX".equals(exchangeCode)) {
+                                    // need at least cols[0..6]
+                                    if (cols.length <= 6) {
+                                        System.err.printf("Skipping NDX row (needs >6 cols, got %d) in %s line %d%n", cols.length, entryName, lineNo);
+                                        continue;
+                                    }
+                                    String token = cols[0].replace("\"", "").trim();
+                                    String stockCode = cols[2].replace("\"", "").trim();
+                                    String companyName = cols.length > 29 ? cols[29].replace("\"", "").trim() : "";
+                                    this.stockScriptDictList.get(idx).put(stockCode, token);
+                                    JSONArray v = new JSONArray();
+                                    v.put(stockCode);
+                                    v.put(companyName);
+                                    this.tokenScriptDictList.get(idx).put(token, v);
+
+                                } else if ("BSE".equals(exchangeCode) || "NSE".equals(exchangeCode)) {
+                                    // BSE/NSE minimal fields: cols[0], cols[1], optional cols[3]
+                                    if (cols.length < 2) {
+                                        System.err.printf("Skipping BSE/NSE short row (needs >=2 cols, got %d) in %s line %d%n", cols.length, entryName, lineNo);
+                                        continue;
+                                    }
+                                    String token = cols[0].replace("\"", "").trim();
+                                    String stockCode = cols[1].replace("\"", "").trim();
+                                    String companyName = cols.length > 3 ? cols[3].replace("\"", "").trim() : "";
+                                    this.stockScriptDictList.get(idx).put(stockCode, token);
+                                    JSONArray v = new JSONArray();
+                                    v.put(stockCode);
+                                    v.put(companyName);
+                                    this.tokenScriptDictList.get(idx).put(token, v);
+
+                                } else {
+                                    // should not reach here
+                                    System.err.printf("Unknown exchange %s for entry %s%n", exchangeCode, entryName);
+                                }
+                            } catch (Exception innerEx) {
+                                // protect against unexpected runtime issues per-line; continue parsing next lines
+                                System.err.printf("Error parsing line %d in %s (len=%d): %s -> %s%n", lineNo, entryName, cols.length, line, innerEx.getMessage());
+                            }
+                        }
+                    } // br2 closed here
+                    zis.closeEntry();
                 }
-            } finally {
-                client.close();
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            // log full stack for debugging
+            e.printStackTrace();
+            System.err.println("Error loading SecurityMaster.zip: " + e.getMessage());
+        } finally {
+            if (conn != null) conn.disconnect();
         }
     }
+
+
+
+//
+//    public void getStockScriptList(){
+//        for(int i=0;i<5;i++){
+//            JSONObject stockScript = new JSONObject();
+//            this.stockScriptDictList.add(stockScript);
+//        }
+//        for(int i=0;i<5;i++){
+//            JSONObject tokenScript = new JSONObject();
+//            this.tokenScriptDictList.add(tokenScript);
+//        }
+//        try{
+//            int CONNECTION_TIMEOUT_MS = 10000; // Timeout in millis.
+//            CloseableHttpClient client = HttpClients.createDefault();
+//            HttpEntityEnclosingRequestBase http = new HttpGetWithEntity();
+//            http.setConfig(RequestConfig.custom()
+//                    .setConnectionRequestTimeout(CONNECTION_TIMEOUT_MS)
+//                    .setConnectTimeout(CONNECTION_TIMEOUT_MS)
+//                    .setSocketTimeout(CONNECTION_TIMEOUT_MS)
+//                    .build());
+//            http.setURI(URI.create(config.urls.get(Config.UrlEnum.STOCK_SCRIPT_CSV_URL)));
+//            String responseString = "";
+//            try {
+//                CloseableHttpResponse response = client.execute(http);
+//                HttpEntity responseEntity = response.getEntity();
+//                responseString = EntityUtils.toString(responseEntity, "UTF-8");
+//                String [] stockDataList = responseString.split("\n");
+//                for(String rowString:stockDataList){
+//                    String [] row = rowString.split(",");
+//                    if(row[2].equals("BSE")){
+//                        this.stockScriptDictList.get(0).put(row[3],row[5]);
+//                        JSONArray values = new JSONArray();
+//                        values.put(row[3]);
+//                        values.put(row[1]);
+//                        this.tokenScriptDictList.get(0).put(row[5],values);
+//                    }
+//                    else if(row[2].equals("NSE")){
+//                        this.stockScriptDictList.get(1).put(row[3],row[5]);
+//                        JSONArray values = new JSONArray();
+//                        values.put(row[3]);
+//                        values.put(row[1]);
+//                        this.tokenScriptDictList.get(1).put(row[5],values);
+//                    }
+//                    else if(row[2].equals("NDX")){
+//                        this.stockScriptDictList.get(2).put(row[7],row[5]);
+//                        JSONArray values = new JSONArray();
+//                        values.put(row[7]);
+//                        values.put(row[1]);
+//                        this.tokenScriptDictList.get(2).put(row[5],values);
+//                    }
+//                    else if(row[2].equals("MCX")){
+//                        this.stockScriptDictList.get(3).put(row[7],row[5]);
+//                        JSONArray values = new JSONArray();
+//                        values.put(row[3]);
+//                        values.put(row[1]);
+//                        this.tokenScriptDictList.get(3).put(row[5],values);
+//                    }
+//                    else if(row[2].equals("NFO")){
+//                        this.stockScriptDictList.get(4).put(row[7],row[5]);
+//                        JSONArray values = new JSONArray();
+//                        values.put(row[3]);
+//                        values.put(row[1]);
+//                        this.tokenScriptDictList.get(4).put(row[5],values);
+//                    }
+//                    else if(row[2].equals("BFO")){
+//                        this.stockScriptDictList.get(5).put(row[7],row[5]);
+//                        JSONArray values = new JSONArray();
+//                        values.put(row[3]);
+//                        values.put(row[1]);
+//                        this.tokenScriptDictList.get(5).put(row[5],values);
+//                    }
+//                }
+//            } finally {
+//                client.close();
+//            }
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     public Dictionary getDataFromStockTokenValue(String inputStockToken) throws Exception {
         Dictionary outputData = new Hashtable();
@@ -148,6 +381,7 @@ public class BreezeConnect extends ApificationBreeze {
         exchangeCodeList.put("13","NDX");
         exchangeCodeList.put("6","MCX");
         exchangeCodeList.put("8","BFO");
+
         String exchangeCodeName = exchangeCodeList.getOrDefault(exchangeType,"");
         JSONArray stockData = new JSONArray();
         stockData = null;
@@ -156,15 +390,9 @@ public class BreezeConnect extends ApificationBreeze {
         }
         else if(exchangeCodeName.toLowerCase().equals("bse")){
             stockData = this.tokenScriptDictList.get(0).optJSONArray(stockToken);
-                if(stockData == null){
-                    stockData = this.tokenScriptDictList.get(5).optJSONArray(stockToken);
-                    if(stockData == null){
-                        this.errorException(String.format(config.exceptionMessage.get(Config.ExceptionEnum.STOCK_NOT_EXIST_EXCEPTION),"i.e. BSE or BFO.",inputStockToken));
-                    }
-                    else{
-                        exchangeCodeName="BFO";
-                    }
-                }
+            if(stockData == null){
+                this.errorException(String.format(config.exceptionMessage.get(Config.ExceptionEnum.STOCK_NOT_EXIST_EXCEPTION), "BSE",inputStockToken));
+            }
 
         }
         else if(exchangeCodeName.toLowerCase().equals("nse")){
@@ -187,7 +415,7 @@ public class BreezeConnect extends ApificationBreeze {
             stockData = this.tokenScriptDictList.get(3).optJSONArray(stockToken);
             if(stockData == null)
                 this.errorException(String.format(config.exceptionMessage.get(Config.ExceptionEnum.STOCK_NOT_EXIST_EXCEPTION),"MCX",inputStockToken));
-        }  else if (exchangeCodeName.toLowerCase().equals("bfo")) {
+        } else if (exchangeCodeName.toLowerCase().equals("bfo")) {
             stockData = this.tokenScriptDictList.get(5).optJSONArray(stockToken);
             if(stockData == null)
                 this.errorException(String.format(config.exceptionMessage.get(Config.ExceptionEnum.STOCK_NOT_EXIST_EXCEPTION),"BFO",inputStockToken));
@@ -238,7 +466,7 @@ public class BreezeConnect extends ApificationBreeze {
             exchangeCodeList.put("NFO", "4.");
             exchangeCodeList.put("BFO", "2.");
 
-            if ((this.interval == null) || (this.interval == "") ){
+            if (this.interval == null || this.interval.isEmpty()) {
                 exchangeCodeList.put("BFO", "8.");
             }
 
@@ -380,10 +608,9 @@ public class BreezeConnect extends ApificationBreeze {
         }
 
     }
-    public void connectTicker()
+    void connectTicker()
     {
         this.connect(false,false);
-
     }
 
     private void watch(String[] stocks) {
@@ -426,6 +653,7 @@ public class BreezeConnect extends ApificationBreeze {
             return this.socketConnectionResponse(String.format(config.responseMessage.get(Config.ResponseEnum.STOCK_SUBSCRIBE_MESSAGE), stockToken));
         }
         catch (Exception e){
+            e.printStackTrace();
             this.errorException(e.toString());
         }
         return null;
@@ -477,8 +705,6 @@ public class BreezeConnect extends ApificationBreeze {
         try {
             Map<String, String> tokenObject = this.getStockTokenValue(exchangeCode, stockCode, productType, expiryDate, strikePrice, right,
                     getExchangeQuotes, getMarketDepth);
-
-
             if(!tokenObject.getOrDefault("exchangeQuotesToken","").equals(""))
                 this.watch(new String[] {tokenObject.get("exchangeQuotesToken")});
             if(!tokenObject.getOrDefault("marketDepthToken","").equals(""))
@@ -641,7 +867,6 @@ public class BreezeConnect extends ApificationBreeze {
         //decode csv array to json payload
         Dictionary orderObject = new Hashtable();
         JSONArray jArray = (JSONArray) data;
-//        System.out.println(jArray);
         if (jArray!=null && jArray.get(0).getClass().getSimpleName().equals("String") && jArray.get(0).toString().indexOf('!')<0){
             orderObject.put("sourceNumber", jArray.get(0));                         //Source Number
             orderObject.put("group", jArray.get(1));                                //Group
@@ -805,43 +1030,6 @@ public class BreezeConnect extends ApificationBreeze {
                 feedObject.put("ltt", dateParse(jArray.getInt(21)));
                 feedObject.put("close", jArray.get(22));
             }
-        } else if (data_type.matches("8")) {
-            feedObject.put("symbol", jArray.get(0));
-            feedObject.put("open", jArray.get(1));
-            feedObject.put("last", jArray.get(2));
-            feedObject.put("high", jArray.get(3));
-            feedObject.put("low", jArray.get(4));
-            feedObject.put("change", jArray.get(5));
-            feedObject.put("bPrice", jArray.get(6));
-            feedObject.put("bQty", jArray.get(7));
-            feedObject.put("sPrice", jArray.get(8));
-            feedObject.put("sQty", jArray.get(9));
-            feedObject.put("ltq", jArray.get(10));
-            feedObject.put("avgPrice", jArray.get(11));
-            feedObject.put("quotes", "Quotes Data");
-            if (jArray.length() == 21) {
-                feedObject.put("ttq", jArray.get(12));
-                feedObject.put("totalBuyQt", jArray.get(13));
-                feedObject.put("totalSellQ", jArray.get(14));
-                feedObject.put("ttv", jArray.get(15));
-                feedObject.put("trend", jArray.get(16));
-                feedObject.put("lowerCktLm", jArray.get(17));
-                feedObject.put("upperCktLm", jArray.get(18));
-                feedObject.put("ltt", dateParse(jArray.getInt(19)));
-                feedObject.put("close", jArray.get(20));
-            } else if (jArray.length() == 23) {
-                feedObject.put("OI", jArray.get(12));
-                feedObject.put("CHNGOI", jArray.get(13));
-                feedObject.put("ttq", jArray.get(14));
-                feedObject.put("totalBuyQt", jArray.get(15));
-                feedObject.put("totalSellQ", jArray.get(16));
-                feedObject.put("ttv", jArray.get(17));
-                feedObject.put("trend", jArray.get(18));
-                feedObject.put("lowerCktLm", jArray.get(19));
-                feedObject.put("upperCktLm", jArray.get(20));
-                feedObject.put("ltt", dateParse(jArray.getInt(21)));
-                feedObject.put("close", jArray.get(22));
-            }
         } else {
             feedObject.put("symbol", jArray.get(0));
             feedObject.put("time", dateParse(jArray.getInt(1)));
@@ -858,9 +1046,10 @@ public class BreezeConnect extends ApificationBreeze {
             feedObject.put("exchange", "NSE Futures & Options");
         } else if (exchange.matches("6")) {
             feedObject.put("exchange", "Commodity");
-        } else if (exchange.matches("8") && jArray.length() == 23) {
+        } else if (exchange.matches("8") && jArray.length() == 23){
             feedObject.put("exchange", "BSE Futures & Options");
         }
+
 
         try {
             if (feedObject.get("symbol").toString().length()>0) {
@@ -938,18 +1127,13 @@ public class BreezeConnect extends ApificationBreeze {
             this.socket.on("stock", (Listener) new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    //System.out.println(args[0]);
-                    //System.out.println(mListener);
                     if (mListener != null) {
                         Object data = null;
                         try {
                             data = parseData(args[0]);
-                            //data = args[0];
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        //System.out.println(data);
-                        //mListener.onTickEvent(data);
                         mListener.onTickEvent(data);
                     }
                 }
