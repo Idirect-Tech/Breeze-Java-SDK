@@ -241,7 +241,7 @@ public class ApificationBreeze {
             else if(stockCode.trim().isEmpty() || stockCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_STOCK_CODE));
             }
-            else if(exchangeCode.equalsIgnoreCase("nfo") || exchangeCode.equalsIgnoreCase("nfo")){
+            else if(exchangeCode.equalsIgnoreCase("nfo")){
                 if(productType.trim().isEmpty() || productType.isEmpty()){
                     return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.PRODUCT_TYPE_ERROR_NFO_BFO));
                 }
@@ -321,8 +321,8 @@ public class ApificationBreeze {
             else if(stockCode.trim().isEmpty() || stockCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_STOCK_CODE));
             }
-            else if(exchangeCode.equalsIgnoreCase("nfo") || exchangeCode.equalsIgnoreCase("ndx") || exchangeCode.equalsIgnoreCase("mcx") || exchangeCode.equalsIgnoreCase("bfo")){
-                if(productType.trim().isEmpty() || productType.isEmpty()){ 
+            else if(exchangeCode.equalsIgnoreCase("nfo") || exchangeCode.equalsIgnoreCase("ndx") || exchangeCode.equalsIgnoreCase("mcx")){
+                if(productType.trim().isEmpty() || productType.isEmpty()){
                     return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_PRODUCT_TYPE_HIST_V2));
                 }
                 else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.PRODUCT_TYPES_HIST_V2))).contains(productType.toLowerCase())) {
@@ -483,7 +483,6 @@ public class ApificationBreeze {
 
     public JSONObject placeOrder(String stockCode, String exchangeCode, String productType, String action, String orderType, String stoploss, String quantity, String price, String validity, String validityDate, String disclosedQuantity, String expiryDate, String right, String strikePrice, String userRemark){
         try{
-
             if(stockCode.trim().isEmpty() || stockCode.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_STOCK_CODE));
             }
@@ -505,9 +504,9 @@ public class ApificationBreeze {
             else if(orderType.trim().isEmpty() || orderType.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_ORDER_TYPE));
             }
-//            else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.ORDER_TYPES))).contains(orderType.toLowerCase())){
-//                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.ORDER_TYPE_ERROR));
-//            }
+            else if(!(Arrays.asList(config.typeLists.get(Config.ListEnum.ORDER_TYPES))).contains(orderType.toLowerCase())){
+                return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.ORDER_TYPE_ERROR));
+            }
             else if(quantity.trim().isEmpty() || quantity.isEmpty()){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_QUANTITY));
             }
@@ -827,7 +826,7 @@ public class ApificationBreeze {
 
     public JSONObject getOptionChainQuotes(String stockCode, String exchangeCode, String expiryDate, String productType, String right, String strikePrice){
         try{
-            if(exchangeCode==null || exchangeCode.trim().isEmpty() || exchangeCode.isEmpty() || !exchangeCode.equalsIgnoreCase("nfo") || !exchangeCode.equalsIgnoreCase("bfo")){
+            if(exchangeCode==null || exchangeCode.trim().isEmpty() || exchangeCode.isEmpty() || !exchangeCode.equalsIgnoreCase("nfo")){
                 return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.OPT_CHAIN_EXCH_CODE_ERROR));
             }
             else if(productType==null || productType.isEmpty() || productType.trim().isEmpty()){
@@ -1023,7 +1022,7 @@ public class ApificationBreeze {
             //else if(right.trim().isEmpty() || right.isEmpty())
             //{
             //    return this.validationResponse("",500,config.responseMessage.get(Config.ResponseEnum.BLANK_RIGHT_TYPE));
-            //}
+            //} 
 
             JSONObject body = new JSONObject();
 
@@ -1150,6 +1149,4 @@ public class ApificationBreeze {
             return(new JSONObject("{\n"+"status:404\n"+"}"));
         }
     }
-
 }
-
