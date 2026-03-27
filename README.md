@@ -2,19 +2,19 @@
 
 <ul>
  <li><a href="#client">Breeze API Java Client</a></li>
+ <li><a href="#regulatoryChanges">Regulatory Changes</a></li>
  <li><a href="#docslink">API Documentation</a></li>
- <li><a href="#virtualenv">Set Up Virtual Environment</a></li>
- <li><a href="#clientinstall">Installing Client</a></li>
  <li><a href="#apiusage">API Usage</a></li>
  <li><a href="#websocket">Websocket Usage</a></li>
  <li><a href="#index_title">List Of Other SDK methods</a></li>
 </ul>
 
-<h4>Usage</h4>
+
+<h3>Usage</h3>
 
 Download the jar file of the project from the following link <a href = "https://github.com/Idirect-Tech/Breeze-Java-SDK/blob/develop/jarbuild/breezeConnect-0.0.4-SNAPSHOT.jar" download>breezeconnect jar file </a>and include it in the build path of your  project.
 
-<h4 id="client">Breeze API Java Client</h4>
+<h3 id="client">Breeze API Java Client</h3>
 
 breezeapi@icicisecurities.com
 
@@ -26,8 +26,16 @@ The official Java client library for the ICICI Securities trading APIs. BreezeCo
 4. Streaming live OHLC (websockets)
 5. Option Chain API
 
+<h3 id="regulatoryChanges">Regulatory Changes</h3>
 
-<h4 id="docslink">API Documentation</h4>
+1) Orders must be placed only from the static IP address registered with ICICI Direct while procuring API key.
+2) Primary or secondary static IP provided by the client can be updated only once per week.
+3) Each client can have multiple API keys as per the circular, however for unregistered algos (Breeze API) the client is restricted to route orders via single API key.
+4) A maximum combined limit of 10 orders per second is allowed, which includes order placement, cancellation, modification, and square-off requests.
+5) Market orders are not permitted.
+6) Placement, modification, or cancelation of Margin and Option Plus orders via the Breeze API is prohibited. 
+
+<h3 id="docslink">API Documentation</h3>
 
 <div class="sticky" >
 <ul>
@@ -35,7 +43,7 @@ The official Java client library for the ICICI Securities trading APIs. BreezeCo
 </ul>
 </div>
 
-<h4 id="apiusage"> API Usage</h4>
+<h3 id="apiusage"> API Usage</h3>
 
 ```java
 
@@ -52,7 +60,7 @@ breezeConnect.generateSession("your_secret_key","your_api_session");
 ```
 <br>
 
-<h4 id ="websocket"> Websocket Usage</h4>
+<h3 id ="websocket"> Websocket Usage</h3>
 
 ```java
 // Initialize SDK
@@ -159,7 +167,7 @@ For Streaming OHLCV, interval must not be empty and must be equal to either of t
 
 ---
 
-<h4> List of other SDK Methods:</h4>
+<h3> List of other SDK Methods:</h3>
 
 <h5 id="index_title" >Index</h5>
 
@@ -192,7 +200,7 @@ For Streaming OHLCV, interval must not be empty and must be equal to either of t
 </div>
 
 
-<h4 id="customer_detail" > Get Customer details by api-session value.</h4>
+<h3 id="customer_detail" > Get Customer details by api-session value.</h3>
 
 
 ```java
@@ -204,7 +212,7 @@ breezeConnect.getCustomerDetails("your_api_session");
 <hr>
 
 
-<h4 id="demat_holding"> Get Demat Holding details of your account.</h4>
+<h3 id="demat_holding"> Get Demat Holding details of your account.</h3>
 
 ```java
 
@@ -216,7 +224,7 @@ breezeConnect.getDematHoldings();
 <hr>
 
 
-<h4 id="get_funds"> Get Funds details of your account.</h4>
+<h3 id="get_funds"> Get Funds details of your account.</h3>
 
 
 ```java
@@ -229,7 +237,7 @@ breezeConnect.getFunds();
 <a href="#index">Back to Index</a>
 <hr>
 
-<h4 id="set_funds"> Set Funds of your account</h4>
+<h3 id="set_funds"> Set Funds of your account</h3>
 
 
 ```java
@@ -241,7 +249,7 @@ breezeConnect.setFunds("debit","200","Equity");
 <a href="#index">Back to Index</a>
 <hr>
 
-<h4 id="historical_data1">Get Historical Data for Futures</h4>
+<h3 id="historical_data1">Get Historical Data for Futures</h3>
 
 
 ```java
@@ -253,7 +261,7 @@ breezeConnect.getHistoricalData(
 
 <a href="#index">Back to Index</a>
 
-<h4 id="historical_data2">Get Historical Data for Equity</h4>
+<h3 id="historical_data2">Get Historical Data for Equity</h3>
 
 
 ```java
@@ -266,7 +274,7 @@ breezeConnect.getHistoricalData(
 <a href="#index">Back to Index</a>
 
 
-<h4 id="historical_data3">Get Historical Data for Options</h4>
+<h3 id="historical_data3">Get Historical Data for Options</h3>
 
 
 ```java
@@ -283,7 +291,7 @@ breezeConnect.getHistoricalData(
 <a href="#index">Back to Index</a>
 <hr>
 
-<h4 id="historical_data_v21">Get Historical Data (version 2) for Futures</h4>
+<h3 id="historical_data_v21">Get Historical Data (version 2) for Futures</h3>
 
 
 ```java
@@ -295,7 +303,7 @@ breezeConnect.getHistoricalDatav2(
 
 <a href="#index">Back to Index</a>
 
-<h4 id="historical_data_v22">Get Historical Data (version 2) for Equity</h4>
+<h3 id="historical_data_v22">Get Historical Data (version 2) for Equity</h3>
 
 
 ```java
@@ -306,7 +314,7 @@ breezeConnect.getHistoricalDatav2(
 ```
 
 <a href="#index">Back to Index</a>
-<h4 id="historical_data_v23">Get Historical Data (version 2) for Options</h4>
+<h3 id="historical_data_v23">Get Historical Data (version 2) for Options</h3>
 
 
 ```java
@@ -331,7 +339,7 @@ Note :
 <hr>
 
 
-<h4 id="add_margin">Add Margin to your account.</h4>
+<h3 id="add_margin">Add Margin to your account.</h3>
 
 
 ```java
@@ -346,7 +354,7 @@ breezeConnect.addMargin(
 <a href="#index">Back to Index</a>
 <hr>
 
-<h4 id="get_margin">Get Margin of your account.</h4>
+<h3 id="get_margin">Get Margin of your account.</h3>
 
 
 ```java
@@ -359,7 +367,7 @@ breezeConnect.getMargin("NSE");
 <a href="#index">Back to Index</a>
 <hr>
 
-<h4 id="place_order">Placing a Futures Order from your account.</h4>
+<h3 id="place_order">Placing a Futures Order from your account.</h3>
 
 
 ```java
@@ -371,7 +379,7 @@ breezeConnect.placeOrder(
 ```                    
 
 
-<h4 id="place_order2">Placing an Option Order from your account.</h4>
+<h3 id="place_order2">Placing an Option Order from your account.</h3>
 
 
 ```java
@@ -385,7 +393,7 @@ breezeConnect.placeOrder(
 <br>
 <a href="#index">Back to Index</a>
 
-<h4 id="place_order3">Place a cash order from your account.</h4>
+<h3 id="place_order3">Place a cash order from your account.</h3>
 
 
 ```java
@@ -397,7 +405,7 @@ breezeConnect.placeOrder(
 <br>
 <a href="#index">Back to Index</a>
 
-<h4 id="place_order4">Place an optionplus order</h4>
+<h3 id="place_order4">Place an optionplus order</h3>
 
 ```java
 
@@ -410,7 +418,7 @@ breezeConnect.placeOrder(
 <br>
 <a href="#index">Back to Index</a>
 
-<h4 id="place_order5">Place an future plus order</h4>
+<h3 id="place_order5">Place an future plus order</h3>
 
 ```java
 
@@ -418,14 +426,18 @@ breezeConnect.placeOrder(
     "NIFTY","NFO","futureplus","Buy","limit","18720",
     "50","18725","Day","0","29-DEC-2022"
 );
-```                
+```   
+<h4> NOTE: </h4>
+<p><ol><li>Order Type should be "limit"</li>
+       <li>The validity_date parameter has no impact on the order execution and even if you pass it while placing the order, it will be excluded from order processing.</li>
+       <li> As per SEBI circular, "Safer participation of retail investors in Algorithmic trading", placing market orders through the Breeze API is not permitted. You are required to place limit orders instead of market orders.</li>
+       <li>Future plus - "Stop loss trigger price cannot be less than last traded price for Buy order"</li></ol></p>              
 <br>
-<p>Future plus - "Stop loss trigger price cannot be less than last traded price for Buy order" </p>
 <a href="#index">Back to Index</a>
 
 <hr>
 
-<h4 id="order_detail">Get an order details by exchange-code and order-id from your account.</h4>
+<h3 id="order_detail">Get an order details by exchange-code and order-id from your account.</h3>
 
 ```java
 breezeConnect.getOrderDetail("NSE","20220819N100000001");
@@ -436,7 +448,7 @@ breezeConnect.getOrderDetail("NSE","20220819N100000001");
 <a href="#index">Back to Index</a>
 <hr>
 
-<h4 id="order_list">Get order list of your account.</h4>
+<h3 id="order_list">Get order list of your account.</h3>
 
 
 ```java
@@ -449,7 +461,7 @@ breezeConnect.getOrderList("NSE","2022-08-01T10:00:00.000Z","2022-08-19T10:00:00
 <hr>
 
 
-<h4 id="cancel_order">Cancel an order from your account whose status are not Executed.</h4> 
+<h3 id="cancel_order">Cancel an order from your account whose status are not Executed.</h3> 
 
 
 ```java
@@ -460,7 +472,7 @@ breezeConnect.cancelOrder("NSE","20220819N100000001");
 <a href="#index">Back to Index</a>
 <hr>
 
-<h4 id="modify_order">Modify an order from your account whose status are not Executed.</h4> 
+<h3 id="modify_order">Modify an order from your account whose status are not Executed.</h3> 
 
 
 ```java
@@ -469,12 +481,14 @@ breezeConnect.modifyOrder(
     "0","2022-08-22T06:00:00.000Z"
 );
 ```
-
+<h4> NOTE: </h4>
+<p><ol><li>The validity_date parameter has no impact on the modification of the order and even if you pass it while modifying the order, it will be excluded from order modification processing.</li>
+<li>As per SEBI circular, "Safer participation of retail investors in Algorithmic trading", modifying market orders through the Breeze API is not permitted. You are required to modify limit orders instead of market orders.</li></ol></p>
 <br>
 <a href="#index">Back to Index</a>
 <hr>
 
-<h4 id="portfolio_holding">Get Portfolio Holdings of your account.</h4>
+<h3 id="portfolio_holding">Get Portfolio Holdings of your account.</h3>
 
 
 ```java
@@ -488,7 +502,7 @@ breezeConnect.getPortfolioHoldings(
 <a href="#index">Back to Index</a>
 <hr>
 
-<h4 id="portfolio_position">Get Portfolio Positions from your account.</h4>
+<h3 id="portfolio_position">Get Portfolio Positions from your account.</h3>
 
 
 ```java
@@ -500,7 +514,7 @@ breezeConnect.getPortfolioPositions()
 <a href="#index">Back to Index</a>
 <hr>
 
-<h4 id="get_quotes">Get quotes of mentioned stock-code </h4>
+<h3 id="get_quotes">Get quotes of mentioned stock-code </h3>
 
 
 ```java
@@ -514,7 +528,7 @@ breezeConnect.getQuotes(
 <a href="#index">Back to Index</a>
 <hr>
 
-<h4 id="get_option_chain">Get option-chain of mentioned stock-code for product-type Futures where input of expiry-date is not compulsory</h4>
+<h3 id="get_option_chain">Get option-chain of mentioned stock-code for product-type Futures where input of expiry-date is not compulsory</h3>
 
 
 ```java
@@ -526,7 +540,7 @@ breezeConnect.getOptionChainQuotes(
 <br>
 <a href="#index">Back to Index</a>
 
-<h4 id="get_option_chain2">Get option-chain of mentioned stock-code for product-type Options where atleast 2 input is required out of expiry-date, right and strike-price</h4>
+<h3 id="get_option_chain2">Get option-chain of mentioned stock-code for product-type Options where atleast 2 input is required out of expiry-date, right and strike-price</h3>
 
 
 ```java
@@ -539,7 +553,7 @@ breezeConnect.getOptionChainQuotes(
 <a href="#index">Back to Index</a>
 <hr>
 
-<h4 id="square_off1">Square off an Equity Margin Order</h4>
+<h3 id="square_off1">Square off an Equity Margin Order</h3>
 
 
 ```java
@@ -548,12 +562,10 @@ breezeConnect.squareOff(
     "","","","",""
 );
 ```
-
-<p> Note: Please refer get_portfolio_positions() for settlement id and margin_amount</p>
 <br>
 <a href="#index">Back to Index</a>
 
-<h4 id="square_off2">Square off an FNO Futures Order</h4>
+<h3 id="square_off2">Square off an FNO Futures Order</h3>
 
 
 ```java
@@ -566,7 +578,7 @@ breezeConnect.squareOff(
 <br>
 <a href="#index">Back to Index</a>
 
-<h4 id="square_off3">Square off an FNO Options Order</h4>
+<h3 id="square_off3">Square off an FNO Options Order</h3>
 
 
 ```java
@@ -575,12 +587,15 @@ breezeConnect.squareOff(
     "sell","market","day","0","50","0","2022-08-12T06:00:00.000Z","","0"
 );
 ```                    
-
+<h4> NOTE: </h4>
+<p><ol><li>The validity_date parameter has no impact on the square off order execution and even if you pass it while squaring off the position, it will be excluded from square off order processing.</li>
+<li>As per SEBI circular, "Safer participation of retail investors in Algorithmic trading", squaring off orders to market orders through the Breeze API is not permitted. You are required to place limit or stoploss order instead of market orders.</li>
+<li>Please refer getPortfolioPositions() for settlement id and margin_amount</li></ol></p>
 <br>
 <a href="#index">Back to Index</a>
 <hr>
 
-<h4 id="trade_list">Get trade list of your account.</h4>
+<h3 id="trade_list">Get trade list of your account.</h3>
 
 
 ```java
@@ -594,7 +609,7 @@ breezeConnect.getTradeList(
 <a href="#index">Back to Index</a>
 <hr>
 
-<h4 id="trade_detail">Get trade detail of your account.</h4>
+<h3 id="trade_detail">Get trade detail of your account.</h3>
 
 
 ```java
@@ -607,7 +622,7 @@ breezeConnect.getTradeDetail("NSE","20220819N100000005");
 <hr>
 
 
-<h4 id = "get_names">Get Names </h4>
+<h3 id = "get_names">Get Names </h3>
 
 
 ```java
@@ -620,7 +635,7 @@ breezeConnect.getNames('NSE','RELIANCE');
 
 <hr>
 
-<h4 id = "preview_order">Preview Order </h4>
+<h3 id = "preview_order">Preview Order </h3>
 
 ```java
 
