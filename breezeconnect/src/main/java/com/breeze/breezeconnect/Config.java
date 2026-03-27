@@ -219,7 +219,7 @@ public class Config {
             put(ResponseEnum.PRODUCT_TYPE_ERROR_NFO_BFO,"Product-type should be either 'futures', 'options', 'futureplus', or 'optionplus' for Exchange-Code 'NFO' or 'BFO'");
             put(ResponseEnum.PRODUCT_TYPE_ERROR_HIST_V2,"Product-type should be either 'futures', 'options' for Exchange-Code 'NFO','NDX', 'MCX' or 'BFO'");
             put(ResponseEnum.ACTION_TYPE_ERROR,"Action should be either 'buy', or 'sell'");
-            put(ResponseEnum.ORDER_TYPE_ERROR,"Order-type should be either 'limit', 'market', or 'stoploss'");
+            put(ResponseEnum.ORDER_TYPE_ERROR,"Order-type should be either 'limit' or 'stoploss'");
             put(ResponseEnum.VALIDITY_TYPE_ERROR,"Validity should be either 'day', 'ioc', or 'vtc'");
             put(ResponseEnum.RIGHT_TYPE_ERROR,"Right should be either 'call', 'put', or 'others'");
             put(ResponseEnum.TRANSACTION_TYPE_ERROR,"Transaction-Type should be either 'debit' or 'credit'");
